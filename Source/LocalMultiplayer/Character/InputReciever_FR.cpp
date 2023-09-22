@@ -3,6 +3,21 @@
 
 #include "InputReciever_FR.h"
 #include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+void AInputReciever_FR::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Add input mapping context
+	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(MappingContext, 0);
+		}
+	}
+}
 
 void AInputReciever_FR::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

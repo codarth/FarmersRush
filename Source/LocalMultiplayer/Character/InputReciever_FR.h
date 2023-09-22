@@ -17,7 +17,7 @@ class LOCALMULTIPLAYER_API AInputReciever_FR : public APawn
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
+	UInputMappingContext* MappingContext;
 	
 	/** Start Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -25,6 +25,9 @@ class LOCALMULTIPLAYER_API AInputReciever_FR : public APawn
 
 protected:
 
+	// To add mapping context
+	virtual void BeginPlay() override;
+	
 	/** APawn interface */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
