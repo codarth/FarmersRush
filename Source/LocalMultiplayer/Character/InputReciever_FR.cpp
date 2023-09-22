@@ -4,6 +4,8 @@
 #include "InputReciever_FR.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer/Core/GameMode_FR.h"
 
 void AInputReciever_FR::BeginPlay()
 {
@@ -32,4 +34,7 @@ void AInputReciever_FR::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 void AInputReciever_FR::Start(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Display, TEXT("Start"));
+
+	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
+	GM->SpawnPlayer(PlayerIndex, this);
 }

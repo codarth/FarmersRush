@@ -33,4 +33,9 @@ protected:
 
 	/** Called for start input */
 	void Start(const FInputActionValue& Value);
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
+	int32 PlayerIndex;
 };
