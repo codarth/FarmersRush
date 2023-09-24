@@ -12,7 +12,7 @@ void AInputReciever_FR::BeginPlay()
 	Super::BeginPlay();
 
 	// Add input mapping context
-	if (APlayerController* PC = Cast<APlayerController>(Controller))
+	if (const APlayerController* PC = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
 		{
@@ -36,5 +36,5 @@ void AInputReciever_FR::Start(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Display, TEXT("Start"));
 
 	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
-	GM->SpawnPlayer(PlayerIndex, this);
+	GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
 }

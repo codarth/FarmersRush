@@ -43,6 +43,24 @@ void APlayer_FR::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	switch (PlayerIndex)
+	{
+	case 0:
+		GetMesh()->SetMaterial(0, PlayerMaterials[0]);	
+		break;
+	case 1:
+		GetMesh()->SetMaterial(0, PlayerMaterials[1]);	
+		break;
+	case 2:
+		GetMesh()->SetMaterial(0, PlayerMaterials[2]);
+		break;
+	case 3:
+		GetMesh()->SetMaterial(0, PlayerMaterials[3]);	
+		break;
+	default:
+		GetMesh()->SetMaterial(0, PlayerMaterials[0]);	
+	}
 }
 
 // Called to bind functionality to input

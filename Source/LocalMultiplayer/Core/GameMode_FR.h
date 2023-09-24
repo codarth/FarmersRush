@@ -7,6 +7,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameMode_FR.generated.h"
 
+class APlayer_FR;
 /**
  * 
  */
@@ -17,7 +18,7 @@ class LOCALMULTIPLAYER_API AGameMode_FR : public AGameModeBase, public IGameMode
 
 	virtual void BeginPlay() override;
 
-	virtual void SpawnPlayer_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver) override;
+	virtual void SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver) override;
 
 	AInputReciever_FR* SpawnInputReceiver(AActor* PlayerStart, int32 Index);
 
@@ -31,4 +32,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player Info")
 	TArray<APlayerController*> PlayerControllers;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Info")
+	TSubclassOf<APlayer_FR> PlayerToSpawn;
 };

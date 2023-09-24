@@ -51,4 +51,12 @@ protected:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+public:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player Info")
+	int32 PlayerIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
+	TArray<UMaterialInstance*> PlayerMaterials;
 };

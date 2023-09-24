@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Character/InputReciever_FR.h"
+#include "LocalMultiplayer/Character/Player_FR.h"
 
 void AGameMode_FR::BeginPlay()
 {
@@ -34,11 +35,7 @@ void AGameMode_FR::BeginPlay()
 			}
 			else
 			{
-				auto PC = UGameplayStatics::GetPlayerController(this, Index);
-				
 				const auto InputReceiver = SpawnInputReceiver(PlayerStart, Index);
-
-				PC->Possess(InputReceiver);
 			}
 		}
 	}
@@ -48,14 +45,27 @@ AInputReciever_FR* AGameMode_FR::SpawnInputReceiver(AActor* PlayerStart, const i
 {
 	// Spawn the InputReceiver and set its player index
 	// const auto InputReceiver = Cast<AInputReciever_FR>(GetWorld()->SpawnActor(AInputReciever_FR::StaticClass(), &PlayerStart->GetActorTransform()));
-	const auto InputReceiver = GetWorld()->SpawnActor<AInputReciever_FR>(InputReceiverToSpawn, PlayerStart->GetActorTransform());
+	const auto InputReceiver = GetWorld()->SpawnActorDeferred<AInputReciever_FR>(InputReceiverToSpawn, PlayerStart->GetActorTransform());
 	InputReceiver->PlayerIndex = Index;
+
+	auto PC = UGameplayStatics::GetPlayerController(this, Index);
+	PC->Possess(InputReceiver);
+
+	InputReceiver->FinishSpawning(PlayerStart->GetActorTransform());
+	
 	InputReceivers.AddUnique(InputReceiver);
 
 	return InputReceiver;
 }
 
-void AGameMode_FR::SpawnPlayer_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver)
+void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver)
 {
-	UE_LOG(LogTemp, Display, TEXT("SpawnPlayer"));
+	UE_LOG(LogTemp, Display, TEXT("SpawnPlayer %d"), CurrentPlayerIndex);
+
+	// Spawn actor
+	const auto Player = GetWorld()->SpawnActor<APlayer_FR>(PlayerToSpawn, InputReceiver->GetActorTransform());
+	Player->PlayerIndex = CurrentPlayerIndex;
+
+	// Possess
+	UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex)->Possess(Player);
 }
