@@ -36,5 +36,12 @@ void AInputReciever_FR::Start(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Display, TEXT("Start"));
 
 	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
-	GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
+	if (GM)
+	{
+		GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to get GameMode"));
+	}
 }

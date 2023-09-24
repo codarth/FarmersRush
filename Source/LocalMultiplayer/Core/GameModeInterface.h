@@ -19,4 +19,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
 	void SpawnPlayerAtInputReceiver(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
+	void DisplayCharacterSelect(int32 CurrentPlayerIndex);
 };

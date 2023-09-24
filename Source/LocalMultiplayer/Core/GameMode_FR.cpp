@@ -2,6 +2,7 @@
 
 
 #include "GameMode_FR.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Character/InputReciever_FR.h"
@@ -21,33 +22,30 @@ void AGameMode_FR::BeginPlay()
 		
 		if (PlayerStart)
 		{
-			// Create a new player if not already created for this player start, or get and possess
+			// Create a new player if not already created for this player start
 			if (!UGameplayStatics::GetPlayerController(this, Index))
 			{
 				UGameplayStatics::CreatePlayer(this, Index, true);
-
-				const auto InputReceiver = SpawnInputReceiver(PlayerStart, Index);
-
-				const auto PC = UGameplayStatics::GetPlayerController(this, Index);
-				PlayerControllers.AddUnique(PC);
-
-				PC->Possess(InputReceiver);
 			}
-			else
-			{
-				const auto InputReceiver = SpawnInputReceiver(PlayerStart, Index);
-			}
+
+			const auto InputReceiver = SpawnAndPossessInputReceiver(PlayerStart, Index);
 		}
 	}
+
+	PlayerSelectWidget = CreateWidget<UPlayerSelectWidget>(GetWorld(), PlayerSelectWidgetClass);
+	if (PlayerSelectWidget)
+	{
+		PlayerSelectWidget->AddToViewport();
+	}
+	
 }
 
-AInputReciever_FR* AGameMode_FR::SpawnInputReceiver(AActor* PlayerStart, const int32 Index)
+AInputReciever_FR* AGameMode_FR::SpawnAndPossessInputReceiver(AActor* PlayerStart, const int32 Index)
 {
-	// Spawn the InputReceiver and set its player index
-	// const auto InputReceiver = Cast<AInputReciever_FR>(GetWorld()->SpawnActor(AInputReciever_FR::StaticClass(), &PlayerStart->GetActorTransform()));
 	const auto InputReceiver = GetWorld()->SpawnActorDeferred<AInputReciever_FR>(InputReceiverToSpawn, PlayerStart->GetActorTransform());
 	InputReceiver->PlayerIndex = Index;
 
+	// PC needs to possess the input receiver before finish spawning
 	auto PC = UGameplayStatics::GetPlayerController(this, Index);
 	PC->Possess(InputReceiver);
 
@@ -68,4 +66,9 @@ void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayer
 
 	// Possess
 	UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex)->Possess(Player);
+}
+
+void AGameMode_FR::DisplayCharacterSelect_Implementation(int32 CurrentPlayerIndex)
+{
+	// Cast<U>(PlayerSelectWidget)->AddCharacterSelect(CurrentPlayerIndex);
 }
