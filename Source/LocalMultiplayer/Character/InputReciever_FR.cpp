@@ -28,6 +28,10 @@ void AInputReciever_FR::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		// Start
 		Input->BindAction(StartAction, ETriggerEvent::Triggered, this, &AInputReciever_FR::Start);
+		// Menu Left
+		Input->BindAction(MenuLeftAction, ETriggerEvent::Triggered, this, &AInputReciever_FR::MenuLeft);
+		// Menu Right
+		Input->BindAction(MenuRightAction, ETriggerEvent::Triggered, this, &AInputReciever_FR::MenuRight);
 	}
 }
 
@@ -38,10 +42,26 @@ void AInputReciever_FR::Start(const FInputActionValue& Value)
 	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
 	if (GM)
 	{
-		GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
+		if (CharacterCustomizeWidget)
+		{
+			GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
+		}
+		else
+		{
+			GM->Execute_DisplayCharacterCustomize(GM, PlayerIndex);
+		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to get GameMode"));
 	}
+
+}
+
+void AInputReciever_FR::MenuLeft(const FInputActionValue& Value)
+{
+}
+
+void AInputReciever_FR::MenuRight(const FInputActionValue& Value)
+{
 }

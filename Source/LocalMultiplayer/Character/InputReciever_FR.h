@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "InputReciever_FR.generated.h"
 
+class UCharacterCustomizeWidget;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -23,6 +24,14 @@ class LOCALMULTIPLAYER_API AInputReciever_FR : public APawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* StartAction;
 
+	/** Menu Left Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MenuLeftAction;
+
+	/** Menu Right Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MenuRightAction;
+
 protected:
 
 	// To add mapping context
@@ -34,8 +43,17 @@ protected:
 	/** Called for start input */
 	void Start(const FInputActionValue& Value);
 
+	/** Called for Menu Left input */
+	void MenuLeft(const FInputActionValue& Value);
+
+	/** Called for Menu Right input */
+	void MenuRight(const FInputActionValue& Value);
+
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
 	int32 PlayerIndex;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Player Info")
+	UCharacterCustomizeWidget* CharacterCustomizeWidget;
 };

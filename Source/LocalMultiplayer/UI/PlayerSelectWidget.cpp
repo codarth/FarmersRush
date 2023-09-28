@@ -2,19 +2,15 @@
 
 
 #include "PlayerSelectWidget.h"
-#include "CharacterSelectWidget.h"
-#include "Widgets/Layout/SUniformGridPanel.h"
 
-UUserWidget* UPlayerSelectWidget::AddCharacterSelectWidget(int32 CurrentPlayerIndex)
+#include "CharacterCustomizeWidget.h"
+#include "Components/UniformGridPanel.h"
+
+UCharacterCustomizeWidget* UPlayerSelectWidget::AddCharacterCustomizeWidget(int32 PlayerIndex)
 {
-	CharacterSelectWidget = CreateWidget<UCharacterSelectWidget>(GetWorld(), CharacterSelectWidgetClass);
-	if (CharacterSelectWidget)
-	{
-		CharacterSelectWidget->AddToViewport();
-	}
-
-	auto GridSlot = MainPanel->AddSlot(CurrentPlayerIndex, 0);
-	GridSlot.AttachWidget(CharacterSelectWidget->TakeWidget());
-	
-	return CharacterSelectWidget;
+	CharacterCustomizeWidget = CreateWidget<UCharacterCustomizeWidget>(GetWorld(), CharacterCustomizeWidgetClass);
+	CharacterCustomizeWidget->PlayerIndex = PlayerIndex;
+	CharacterCustomizeWidget->AddToViewport();
+	MainPanel->AddChildToUniformGrid(CharacterCustomizeWidget, 0, PlayerIndex);
+	return CharacterCustomizeWidget;	
 }

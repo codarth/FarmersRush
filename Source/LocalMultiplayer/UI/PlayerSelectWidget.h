@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerSelectWidget.generated.h"
 
-class SUniformGridPanel;
-class UCharacterSelectWidget;
+class UCharacterCustomizeWidget;
+class UUniformGridPanel;
 /**
  * 
  */
@@ -18,16 +18,17 @@ class LOCALMULTIPLAYER_API UPlayerSelectWidget : public UUserWidget
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "Select Widget")
-	UUserWidget* AddCharacterSelectWidget(int32 CurrentPlayerIndex);
+	// Adds a new character customize widget to the main panel
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+	UCharacterCustomizeWidget* AddCharacterCustomizeWidget(int32 PlayerIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UCharacterSelectWidget> CharacterSelectWidgetClass;
+	TSubclassOf<UCharacterCustomizeWidget> CharacterCustomizeWidgetClass;
 
 	UPROPERTY()
-	UCharacterSelectWidget* CharacterSelectWidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-	SUniformGridPanel* MainPanel;
+	UCharacterCustomizeWidget* CharacterCustomizeWidget;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Widgets", meta = (BindWidget))
+	UUniformGridPanel* MainPanel;
 
 };

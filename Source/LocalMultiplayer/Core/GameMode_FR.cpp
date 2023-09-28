@@ -2,11 +2,11 @@
 
 
 #include "GameMode_FR.h"
-#include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Character/InputReciever_FR.h"
 #include "LocalMultiplayer/Character/Player_FR.h"
+#include "LocalMultiplayer/UI/PlayerSelectWidget.h"
 
 void AGameMode_FR::BeginPlay()
 {
@@ -28,7 +28,7 @@ void AGameMode_FR::BeginPlay()
 				UGameplayStatics::CreatePlayer(this, Index, true);
 			}
 
-			const auto InputReceiver = SpawnAndPossessInputReceiver(PlayerStart, Index);
+			SpawnAndPossessInputReceiver(PlayerStart, Index);
 		}
 	}
 
@@ -68,7 +68,9 @@ void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayer
 	UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex)->Possess(Player);
 }
 
-void AGameMode_FR::DisplayCharacterSelect_Implementation(int32 CurrentPlayerIndex)
+void AGameMode_FR::DisplayCharacterCustomize_Implementation(int32 CurrentPlayerIndex)
 {
-	// Cast<U>(PlayerSelectWidget)->AddCharacterSelect(CurrentPlayerIndex);
+	PlayerSelectWidget->AddCharacterCustomizeWidget(CurrentPlayerIndex);
+
+	InputReceivers[CurrentPlayerIndex]->CharacterCustomizeWidget = PlayerSelectWidget->CharacterCustomizeWidget;
 }

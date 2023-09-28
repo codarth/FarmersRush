@@ -20,7 +20,7 @@ class LOCALMULTIPLAYER_API AGameMode_FR : public AGameModeBase, public IGameMode
 	virtual void BeginPlay() override;
 
 	virtual void SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver) override;
-	virtual void DisplayCharacterSelect_Implementation(int32 CurrentPlayerIndex) override;
+	virtual void DisplayCharacterCustomize_Implementation(int32 CurrentPlayerIndex) override;
 	
 	AInputReciever_FR* SpawnAndPossessInputReceiver(AActor* PlayerStart, int32 Index);
 
@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Info")
 	TSubclassOf<APlayer_FR> PlayerToSpawn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
 	TSubclassOf<UPlayerSelectWidget> PlayerSelectWidgetClass;
 
 	UPROPERTY()
