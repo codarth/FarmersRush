@@ -55,7 +55,7 @@ protected:
 public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player Info")
-	int32 PlayerIndex;
+	int32 CharacterChoice;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
 	TArray<UMaterialInstance*> PlayerMaterials;

@@ -18,7 +18,7 @@ class LOCALMULTIPLAYER_API IGameModeInterface
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
-	void SpawnPlayerAtInputReceiver(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver);
+	void SpawnPlayerAtInputReceiver(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver, int32 CharacterChoice);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
 	void DisplayCharacterCustomize(int32 CurrentPlayerIndex);

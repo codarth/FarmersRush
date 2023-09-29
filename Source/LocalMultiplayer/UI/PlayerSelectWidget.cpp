@@ -9,7 +9,7 @@
 UCharacterCustomizeWidget* UPlayerSelectWidget::AddCharacterCustomizeWidget(int32 PlayerIndex)
 {
 	CharacterCustomizeWidget = CreateWidget<UCharacterCustomizeWidget>(GetWorld(), CharacterCustomizeWidgetClass);
-	CharacterCustomizeWidget->PlayerIndex = PlayerIndex;
+	CharacterCustomizeWidget->CharacterColorChoice = PlayerIndex;
 	CharacterCustomizeWidget->AddToViewport();
 	MainPanel->AddChildToUniformGrid(CharacterCustomizeWidget, 0, PlayerIndex);
 	return CharacterCustomizeWidget;	

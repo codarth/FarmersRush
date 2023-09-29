@@ -44,7 +44,7 @@ void APlayer_FR::BeginPlay()
 		}
 	}
 
-	switch (PlayerIndex)
+	switch (CharacterChoice)
 	{
 	case 0:
 		GetMesh()->SetMaterial(0, PlayerMaterials[0]);	

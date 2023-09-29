@@ -56,13 +56,14 @@ AInputReciever_FR* AGameMode_FR::SpawnAndPossessInputReceiver(AActor* PlayerStar
 	return InputReceiver;
 }
 
-void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver)
+void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver, int32 CharacterChoice)
 {
 	UE_LOG(LogTemp, Display, TEXT("SpawnPlayer %d"), CurrentPlayerIndex);
 
 	// Spawn actor
-	const auto Player = GetWorld()->SpawnActor<APlayer_FR>(PlayerToSpawn, InputReceiver->GetActorTransform());
-	Player->PlayerIndex = CurrentPlayerIndex;
+	const auto Player = GetWorld()->SpawnActorDeferred<APlayer_FR>(PlayerToSpawn, InputReceiver->GetActorTransform());
+	Player->CharacterChoice = CharacterChoice;
+	Player->FinishSpawning(InputReceiver->GetActorTransform());
 
 	// Possess
 	UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex)->Possess(Player);

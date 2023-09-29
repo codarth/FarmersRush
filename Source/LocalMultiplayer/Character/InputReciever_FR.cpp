@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Core/GameMode_FR.h"
+#include "LocalMultiplayer/UI/CharacterCustomizeWidget.h"
 
 void AInputReciever_FR::BeginPlay()
 {
@@ -44,7 +45,9 @@ void AInputReciever_FR::Start(const FInputActionValue& Value)
 	{
 		if (CharacterCustomizeWidget)
 		{
-			GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this);
+			GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this, CharacterCustomizeWidget->CharacterColorChoice);
+			CharacterCustomizeWidget->RemoveFromParent();
+			CharacterCustomizeWidget = nullptr;
 		}
 		else
 		{
@@ -60,8 +63,16 @@ void AInputReciever_FR::Start(const FInputActionValue& Value)
 
 void AInputReciever_FR::MenuLeft(const FInputActionValue& Value)
 {
+	if (CharacterCustomizeWidget)
+	{
+		CharacterCustomizeWidget->SwitchCharacterColor(-1);
+	}
 }
 
 void AInputReciever_FR::MenuRight(const FInputActionValue& Value)
 {
+	if (CharacterCustomizeWidget)
+	{
+		CharacterCustomizeWidget->SwitchCharacterColor(1);
+	}
 }

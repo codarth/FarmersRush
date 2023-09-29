@@ -19,7 +19,7 @@ class LOCALMULTIPLAYER_API AGameMode_FR : public AGameModeBase, public IGameMode
 
 	virtual void BeginPlay() override;
 
-	virtual void SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver) override;
+	virtual void SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayerIndex, AInputReciever_FR* InputReceiver, int32 CharacterChoice) override;
 	virtual void DisplayCharacterCustomize_Implementation(int32 CurrentPlayerIndex) override;
 	
 	AInputReciever_FR* SpawnAndPossessInputReceiver(AActor* PlayerStart, int32 Index);

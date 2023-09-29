@@ -19,16 +19,16 @@ class LOCALMULTIPLAYER_API UPlayerSelectWidget : public UUserWidget
 public:
 
 	// Adds a new character customize widget to the main panel
-	UFUNCTION(BlueprintCallable, Category = "Widgets")
+	UFUNCTION(BlueprintCallable, Category = "Player Info")
 	UCharacterCustomizeWidget* AddCharacterCustomizeWidget(int32 PlayerIndex);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
 	TSubclassOf<UCharacterCustomizeWidget> CharacterCustomizeWidgetClass;
 
 	UPROPERTY()
 	UCharacterCustomizeWidget* CharacterCustomizeWidget;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Widgets", meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
 	UUniformGridPanel* MainPanel;
 
 };
