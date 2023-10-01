@@ -22,4 +22,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
 	void DisplayCharacterCustomize(int32 CurrentPlayerIndex);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
+	void StartGame();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "GameModeInterface")
+	bool GetIsInGame();
 };

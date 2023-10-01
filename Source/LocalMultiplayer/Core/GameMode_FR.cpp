@@ -2,8 +2,13 @@
 
 
 #include "GameMode_FR.h"
+
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/PlayerStart.h"
+#include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer/Character/GameCamera.h"
 #include "LocalMultiplayer/Character/InputReciever_FR.h"
 #include "LocalMultiplayer/Character/Player_FR.h"
 #include "LocalMultiplayer/UI/PlayerSelectWidget.h"
@@ -12,7 +17,12 @@ void AGameMode_FR::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// TODO: Change this to just find a random player start
+	// Get all GameCamera actors
+	TArray<AActor*> GameCameras;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGameCamera::StaticClass(), GameCameras);
+	CameraRef = Cast<AGameCamera>(GameCameras[0]);
+	
+	// Get all PlayerStart actors
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 	
@@ -31,6 +41,8 @@ void AGameMode_FR::BeginPlay()
 			SpawnAndPossessInputReceiver(PlayerStart, Index);
 		}
 	}
+
+	RemoveUnusedCameras();
 
 	PlayerSelectWidget = CreateWidget<UPlayerSelectWidget>(GetWorld(), PlayerSelectWidgetClass);
 	if (PlayerSelectWidget)
@@ -53,6 +65,8 @@ AInputReciever_FR* AGameMode_FR::SpawnAndPossessInputReceiver(AActor* PlayerStar
 	
 	InputReceivers.AddUnique(InputReceiver);
 
+	PC->SetViewTargetWithBlend(CameraRef);
+	
 	return InputReceiver;
 }
 
@@ -64,9 +78,14 @@ void AGameMode_FR::SpawnPlayerAtInputReceiver_Implementation(int32 CurrentPlayer
 	const auto Player = GetWorld()->SpawnActorDeferred<APlayer_FR>(PlayerToSpawn, InputReceiver->GetActorTransform());
 	Player->CharacterChoice = CharacterChoice;
 	Player->FinishSpawning(InputReceiver->GetActorTransform());
+	CurrentPlayers.AddUnique(Player);
 
 	// Possess
-	UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex)->Possess(Player);
+	auto PC = UGameplayStatics::GetPlayerController(this, CurrentPlayerIndex);
+	PC->Possess(Player);
+
+	PC->SetViewTargetWithBlend(CameraRef);
+
 }
 
 void AGameMode_FR::DisplayCharacterCustomize_Implementation(int32 CurrentPlayerIndex)
@@ -75,3 +94,38 @@ void AGameMode_FR::DisplayCharacterCustomize_Implementation(int32 CurrentPlayerI
 
 	InputReceivers[CurrentPlayerIndex]->CharacterCustomizeWidget = PlayerSelectWidget->CharacterCustomizeWidget;
 }
+
+void AGameMode_FR::StartGame_Implementation()
+{
+	if (CurrentPlayers.Num() >= MinPlayersToStart)
+	{
+		GameStarted();
+		
+		// print to screen
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Game Started!")));
+
+	}
+}
+
+bool AGameMode_FR::GetIsInGame_Implementation()
+{
+	return bIsInGame;
+}
+
+void AGameMode_FR::RemoveUnusedCameras()
+{
+	TArray<AActor*> Cameras;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), Cameras);
+
+	for (auto Camera : Cameras)
+	{
+		Camera->Destroy();
+	}
+}
+
+void AGameMode_FR::GameStarted()
+{
+	bIsInGame = true;
+	CameraRef->GameStarted(CurrentPlayers);
+}
+

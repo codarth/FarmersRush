@@ -38,20 +38,21 @@ void AInputReciever_FR::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void AInputReciever_FR::Start(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("Start"));
-
 	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
 	if (GM)
 	{
-		if (CharacterCustomizeWidget)
+		if (!GM->bIsInGame)
 		{
-			GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this, CharacterCustomizeWidget->CharacterColorChoice);
-			CharacterCustomizeWidget->RemoveFromParent();
-			CharacterCustomizeWidget = nullptr;
-		}
-		else
-		{
-			GM->Execute_DisplayCharacterCustomize(GM, PlayerIndex);
+			if (CharacterCustomizeWidget)
+			{
+				GM->Execute_SpawnPlayerAtInputReceiver(GM, PlayerIndex, this, CharacterCustomizeWidget->CharacterColorChoice);
+				CharacterCustomizeWidget->RemoveFromParent();
+				CharacterCustomizeWidget = nullptr;
+			}
+			else
+			{
+				GM->Execute_DisplayCharacterCustomize(GM, PlayerIndex);
+			}
 		}
 	}
 	else

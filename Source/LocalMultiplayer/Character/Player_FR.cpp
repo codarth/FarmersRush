@@ -6,6 +6,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer/Core/GameMode_FR.h"
 
 DEFINE_LOG_CATEGORY(LogCharacter);
 
@@ -78,6 +80,9 @@ void APlayer_FR::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayer_FR::Look);
+
+		// Start Game
+		EnhancedInputComponent->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayer_FR::StartGame);
 	}
 	else
 	{
@@ -118,5 +123,14 @@ void APlayer_FR::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void APlayer_FR::StartGame(const FInputActionValue& Value)
+{
+	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+		GM->Execute_StartGame(GM);
 	}
 }

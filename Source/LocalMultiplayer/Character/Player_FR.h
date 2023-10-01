@@ -33,6 +33,10 @@ class LOCALMULTIPLAYER_API APlayer_FR : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Start Game Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* StartGameAction;
+
 public:
 	// Sets default values for this character's properties
 	APlayer_FR();
@@ -44,6 +48,9 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	/** Called for Start Game input */
+	void StartGame(const FInputActionValue& Value);
 
 protected:
 	// Called when the game starts or when spawned
