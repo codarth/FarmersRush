@@ -4,7 +4,6 @@
 #include "GameMode_FR.h"
 
 #include "Camera/CameraActor.h"
-#include "Camera/CameraComponent.h"
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"

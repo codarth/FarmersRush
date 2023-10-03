@@ -10,6 +10,8 @@
 
 class UPlayerSelectWidget;
 class APlayer_FR;
+class AGameCamera;
+
 /**
  * 
  */
