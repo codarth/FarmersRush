@@ -19,7 +19,14 @@ void AGameMode_FR::BeginPlay()
 	// Get all GameCamera actors
 	TArray<AActor*> GameCameras;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGameCamera::StaticClass(), GameCameras);
-	CameraRef = Cast<AGameCamera>(GameCameras[0]);
+	if (GameCameras.Num() > 0)
+	{
+		CameraRef = Cast<AGameCamera>(GameCameras[0]);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No GameCamera found!"));
+	}
 	
 	// Get all PlayerStart actors
 	TArray<AActor*> PlayerStarts;
