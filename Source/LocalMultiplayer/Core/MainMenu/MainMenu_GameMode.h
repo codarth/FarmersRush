@@ -6,6 +6,9 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenu_GameMode.generated.h"
 
+class UMainMenuWidget;
+class APlayerCustomizer;
+
 /**
  * 
  */
@@ -20,5 +23,31 @@ public:
 
 	// Main menu widget class
 	UPROPERTY(EditDefaultsOnly, Category = "Main Menu")
-	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
+
+	// Main menu widget
+	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
+	UMainMenuWidget* MainMenuWidget;
+	
+	// Player selection customizer class
+	UPROPERTY(EditDefaultsOnly, Category = "Main Menu|Player Customizer")
+	TSubclassOf<APlayerCustomizer> PlayerCustomizerClass;
+	
+	// Player selection customizer
+	UPROPERTY(BlueprintReadOnly, Category = "Main Menu|Player Customizer")
+	APlayerCustomizer* PlayerCustomizer;
+	
+	// Player setup button pressed
+	UFUNCTION(BlueprintCallable, Category = "Main Menu")
+	void PlayerSetup();
+
+	// Back button pressed
+	UFUNCTION(BlueprintCallable, Category = "Main Menu")
+	void BackToMainMenu();
+
+	// Quit game button pressed
+	UFUNCTION(BlueprintCallable, Category = "Main Menu")
+	void QuitToDesktop();
+
+	
 };

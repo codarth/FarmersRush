@@ -128,9 +128,10 @@ void APlayer_FR::Look(const FInputActionValue& Value)
 
 void APlayer_FR::StartGame(const FInputActionValue& Value)
 {
-	auto* GM = Cast<AGameMode_FR>(UGameplayStatics::GetGameMode(this));
-	if (GM)
+	const auto GM = UGameplayStatics::GetGameMode(this);
+	const auto GMI = Cast<IGameModeInterface>(GM);
+	if (GMI)
 	{
-		GM->Execute_StartGame(GM);
+		GMI->Execute_StartGame(GM);
 	}
 }
