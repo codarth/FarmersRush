@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class UButtonBase;
+
 /**
  * 
  */
@@ -16,6 +18,8 @@ class LOCALMULTIPLAYER_API UMainMenuWidget : public UUserWidget
 
 public:
 
+	virtual void NativeConstruct() override;
+	
 	// Hide main buttons border
 	UFUNCTION(BlueprintCallable, Category = "Main Menu")
 	void HideMainButtonsBorder();
@@ -44,17 +48,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Main Menu")
 	void Quit();
 	
-	// // Play button
-	// UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
-	// class UButton* PlayButton;
-	//
-	// // Back button
-	// UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
-	// class UButton* BackButton;
-	//
-	// // Quit button
-	// UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
-	// class UButton* QuitButton;
+	// Play button
+	UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
+	UButtonBase* PlayButton;
+	
+	// Back button
+	UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
+	UButtonBase* BackButton;
+	
+	// Quit button
+	UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
+	UButtonBase* QuitButton;
 	
 	// Main menu buttons border
 	UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))

@@ -2,7 +2,21 @@
 
 
 #include "MainMenuWidget.h"
+
+#include "ButtonBase.h"
 #include "Components/Border.h"
+#include "Components/Button.h"
+
+void UMainMenuWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	// Setup button events
+	PlayButton->Button->OnClicked.AddDynamic(this, &UMainMenuWidget::Play);
+	BackButton->Button->OnClicked.AddDynamic(this, &UMainMenuWidget::Back);
+	QuitButton->Button->OnClicked.AddDynamic(this, &UMainMenuWidget::Quit);
+	
+}
 
 void UMainMenuWidget::HideMainButtonsBorder()
 {
@@ -38,5 +52,5 @@ void UMainMenuWidget::Back()
 
 void UMainMenuWidget::Quit()
 {
-	
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand("quit");
 }
