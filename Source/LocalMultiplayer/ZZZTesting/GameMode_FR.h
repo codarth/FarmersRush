@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameModeInterface.h"
 #include "GameFramework/GameModeBase.h"
-#include "LocalMultiplayer/Character/GameCamera.h"
+#include "LocalMultiplayer/ZZZTesting/GameCamera.h"
 #include "GameMode_FR.generated.h"
 
 class UPlayerSelectWidget;

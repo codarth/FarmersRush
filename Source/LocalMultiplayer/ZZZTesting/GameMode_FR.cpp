@@ -7,10 +7,10 @@
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Character/GameCamera.h"
-#include "LocalMultiplayer/Character/InputReciever_FR.h"
-#include "LocalMultiplayer/Character/Player_FR.h"
-#include "LocalMultiplayer/UI/PlayerSelectWidget.h"
+#include "LocalMultiplayer/ZZZTesting/GameCamera.h"
+#include "LocalMultiplayer/ZZZTesting/InputReciever_FR.h"
+#include "LocalMultiplayer/ZZZTesting/Player_FR.h"
+#include "LocalMultiplayer/ZZZTesting/PlayerSelectWidget.h"
 
 void AGameMode_FR::BeginPlay()
 {

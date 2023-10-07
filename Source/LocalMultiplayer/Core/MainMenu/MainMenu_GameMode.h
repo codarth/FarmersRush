@@ -6,8 +6,10 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenu_GameMode.generated.h"
 
+class APlayerCustomizeSlot;
+class UInputMappingContext;
+class UInputAction;
 class UMainMenuWidget;
-class APlayerCustomizer;
 
 /**
  * 
@@ -19,6 +21,8 @@ class LOCALMULTIPLAYER_API AMainMenu_GameMode : public AGameModeBase
 
 	virtual void BeginPlay() override;
 
+	// void RemoveUnusedCameras();
+	
 public:
 
 	// Main menu widget class
@@ -28,26 +32,18 @@ public:
 	// Main menu widget
 	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
 	UMainMenuWidget* MainMenuWidget;
-	
-	// Player selection customizer class
-	UPROPERTY(EditDefaultsOnly, Category = "Main Menu|Player Customizer")
-	TSubclassOf<APlayerCustomizer> PlayerCustomizerClass;
-	
-	// Player selection customizer
-	UPROPERTY(BlueprintReadOnly, Category = "Main Menu|Player Customizer")
-	APlayerCustomizer* PlayerCustomizer;
-	
-	// Player setup button pressed
-	UFUNCTION(BlueprintCallable, Category = "Main Menu")
-	void PlayerSetup();
 
-	// Back button pressed
-	UFUNCTION(BlueprintCallable, Category = "Main Menu")
-	void BackToMainMenu();
+	// Player customizer class
+	UPROPERTY(EditDefaultsOnly, Category = "Main Menu")
+	TSubclassOf<APlayerCustomizeSlot> PlayerCustomizerSlotClass;
 
-	// Quit game button pressed
-	UFUNCTION(BlueprintCallable, Category = "Main Menu")
-	void QuitToDesktop();
+	// Player customizer
+	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
+	APlayerCustomizeSlot* PlayerCustomizerSlot;
 
+	// Spawn and possess player customizer
+	UFUNCTION(BlueprintCallable, Category = "Main Menu")
+	void SpawnAndPossessPlayerCustomizer(const int32 PlayerIndex);
+	
 	
 };

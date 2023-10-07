@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuWidget.generated.h"
 
+class UHorizontalBox;
 class UButtonBase;
 
 /**
@@ -19,6 +20,8 @@ class LOCALMULTIPLAYER_API UMainMenuWidget : public UUserWidget
 public:
 
 	virtual void NativeConstruct() override;
+
+	/** Buttons */
 	
 	// Hide main buttons border
 	UFUNCTION(BlueprintCallable, Category = "Main Menu")
@@ -67,4 +70,10 @@ public:
 	// Back button border
 	UPROPERTY(BlueprintReadWrite, Category = "Main Menu", meta = (BindWidget))
 	class UBorder* BackButtonBorder;
+
+	/** Character Customization */
+
+	// Player Slot Box
+	UPROPERTY(BlueprintReadWrite, Category = "Character Customization", meta = (BindWidget))
+	UHorizontalBox* PlayerSlotBox;
 };

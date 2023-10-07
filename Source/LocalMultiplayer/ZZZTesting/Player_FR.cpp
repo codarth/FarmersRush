@@ -7,7 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Core/GameMode_FR.h"
+#include "LocalMultiplayer/ZZZTesting/GameMode_FR.h"
 
 DEFINE_LOG_CATEGORY(LogCharacter);
 

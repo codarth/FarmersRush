@@ -6,7 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Character/Player_FR.h"
+#include "LocalMultiplayer/ZZZTesting/Player_FR.h"
 #include "Math/UnrealMathUtility.h"
 
 // Sets default values

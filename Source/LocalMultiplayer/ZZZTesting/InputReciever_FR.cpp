@@ -5,8 +5,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Core/GameMode_FR.h"
-#include "LocalMultiplayer/UI/CharacterCustomizeWidget.h"
+#include "LocalMultiplayer/ZZZTesting/GameMode_FR.h"
+#include "LocalMultiplayer/ZZZTesting/CharacterCustomizeWidget.h"
 
 void AInputReciever_FR::BeginPlay()
 {
