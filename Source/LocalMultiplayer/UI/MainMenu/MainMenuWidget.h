@@ -76,4 +76,8 @@ public:
 	// Player Slot Box
 	UPROPERTY(BlueprintReadWrite, Category = "Character Customization", meta = (BindWidget))
 	UHorizontalBox* PlayerSlotBox;
+
+private:
+
+	bool bIsInPlayerCustomization = false;
 };

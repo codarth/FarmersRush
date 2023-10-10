@@ -6,7 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenu_GameMode.generated.h"
 
-class APlayerCustomizeSlot;
+class APlayerCustomizePawn;
 class UInputMappingContext;
 class UInputAction;
 class UMainMenuWidget;
@@ -35,15 +35,17 @@ public:
 
 	// Player customizer class
 	UPROPERTY(EditDefaultsOnly, Category = "Main Menu")
-	TSubclassOf<APlayerCustomizeSlot> PlayerCustomizerSlotClass;
+	TSubclassOf<APlayerCustomizePawn> PlayerCustomizerPawnClass;
 
 	// Player customizer
 	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
-	APlayerCustomizeSlot* PlayerCustomizerSlot;
+	APlayerCustomizePawn* PlayerCustomizerPawn;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
+	TArray<APlayerCustomizePawn*> PlayerCustomizers;
 
 	// Spawn and possess player customizer
 	UFUNCTION(BlueprintCallable, Category = "Main Menu")
 	void SpawnAndPossessPlayerCustomizer(const int32 PlayerIndex);
-	
-	
+
 };

@@ -4,10 +4,9 @@
 #include "MainMenu_GameMode.h"
 
 #include "Blueprint/UserWidget.h"
-#include "Camera/CameraActor.h"
 #include "Components/HorizontalBox.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Character/MainMenu/PlayerCustomizeSlot.h"
+#include "LocalMultiplayer/Character/MainMenu/PlayerCustomizePawn.h"
 #include "LocalMultiplayer/UI/MainMenu/MainMenuWidget.h"
 #include "LocalMultiplayer/UI/MainMenu/PlayerSlot.h"
 
@@ -17,6 +16,8 @@ void AMainMenu_GameMode::BeginPlay()
 
 	const auto PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	(MainMenuWidget = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))->AddToViewport();
+
+	PlayerController->SetInputMode(FInputModeGameAndUI());
 	PlayerController->bShowMouseCursor = true;
 
 	auto PlayerSlots = MainMenuWidget->PlayerSlotBox->GetAllChildren();
@@ -24,36 +25,30 @@ void AMainMenu_GameMode::BeginPlay()
 	{
 		for (const auto Widget : PlayerSlots)
 		{
-			if(const auto Slot = Cast<UPlayerSlot>(Widget); !UGameplayStatics::GetPlayerController(this, Slot->PlayerIndex))
+			if(const auto Slot = Cast<UPlayerSlot>(Widget))
 			{
-				UGameplayStatics::CreatePlayer(this, Slot->PlayerIndex,true);
+				if (!UGameplayStatics::GetPlayerController(this, Slot->PlayerIndex))
+				{
+					UGameplayStatics::CreatePlayer(this, Slot->PlayerIndex,true);
+				}
+
+				SpawnAndPossessPlayerCustomizer(Slot->PlayerIndex);
 			}
 		}
 	}
-
-	// RemoveUnusedCameras();
 }
-
-// void AMainMenu_GameMode::RemoveUnusedCameras()
-// {
-// 	TArray<AActor*> Cameras;
-// 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACameraActor::StaticClass(), Cameras);
-//
-// 	for (auto* Camera : Cameras)
-// 	{
-// 		Camera->Destroy();
-// 	}
-// }
 
 void AMainMenu_GameMode::SpawnAndPossessPlayerCustomizer(const int32 PlayerIndex)
 {
-	PlayerCustomizerSlot = GetWorld()->SpawnActorDeferred<APlayerCustomizeSlot>(PlayerCustomizerSlotClass, FTransform::Identity);
-	PlayerCustomizerSlot->SetPlayerIndex(PlayerIndex);
+	PlayerCustomizerPawn = GetWorld()->SpawnActorDeferred<APlayerCustomizePawn>(PlayerCustomizerPawnClass, FTransform::Identity);
+	PlayerCustomizerPawn->SetPlayerIndex(PlayerIndex);
 
 	auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
-	PC->Possess(PlayerCustomizerSlot);
+	PC->Possess(PlayerCustomizerPawn);
 
-	PlayerCustomizerSlot->FinishSpawning(FTransform::Identity);	
+	PlayerCustomizerPawn->FinishSpawning(FTransform::Identity);
+
+	PlayerCustomizers.AddUnique(PlayerCustomizerPawn);
 }
 
 

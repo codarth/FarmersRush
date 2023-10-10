@@ -42,12 +42,16 @@ void UMainMenuWidget::Play()
 {
 	HideMainButtonsBorder();
 	ShowBackButtonBorder();
+
+	bIsInPlayerCustomization = true;
 }
 
 void UMainMenuWidget::Back()
 {
 	HideBackButtonBorder();
 	ShowMainButtonsBorder();
+
+	bIsInPlayerCustomization = false;
 }
 
 void UMainMenuWidget::Quit()

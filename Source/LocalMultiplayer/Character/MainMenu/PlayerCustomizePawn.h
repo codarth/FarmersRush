@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "PlayerCustomizeSlot.generated.h"
+#include "PlayerCustomizePawn.generated.h"
 
+struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 
 UCLASS()
-class LOCALMULTIPLAYER_API APlayerCustomizeSlot : public APawn
+class LOCALMULTIPLAYER_API APlayerCustomizePawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	APlayerCustomizeSlot();
+	APlayerCustomizePawn();
 
 protected:
 	// Called when the game starts or when spawned
@@ -54,4 +55,11 @@ public:
 private:
 
 	int32 PlayerIndex;
+
+protected:
+
+	// Called for join input
+	void Join(const FInputActionValue& Value);
+
+	
 };
