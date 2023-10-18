@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenu_GameMode.generated.h"
 
+class AMainMenuCamera;
+class APlayerFarmerCharacter;
 class APlayerCustomizePawn;
 class UInputMappingContext;
 class UInputAction;
@@ -19,33 +21,16 @@ class LOCALMULTIPLAYER_API AMainMenu_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	UFUNCTION()
+	APlayerFarmerCharacter* SpawnAndPossessCharacter(const AActor* PlayerStart, const int32 Index);
+	
 	virtual void BeginPlay() override;
 
-	// void RemoveUnusedCameras();
-	
 public:
+	
+	UPROPERTY()
+	AMainMenuCamera* CameraRef;
 
-	// Main menu widget class
-	UPROPERTY(EditDefaultsOnly, Category = "Main Menu")
-	TSubclassOf<UMainMenuWidget> MainMenuWidgetClass;
-
-	// Main menu widget
-	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
-	UMainMenuWidget* MainMenuWidget;
-
-	// Player customizer class
-	UPROPERTY(EditDefaultsOnly, Category = "Main Menu")
-	TSubclassOf<APlayerCustomizePawn> PlayerCustomizerPawnClass;
-
-	// Player customizer
-	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
-	APlayerCustomizePawn* PlayerCustomizerPawn;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Main Menu")
-	TArray<APlayerCustomizePawn*> PlayerCustomizers;
-
-	// Spawn and possess player customizer
-	UFUNCTION(BlueprintCallable, Category = "Main Menu")
-	void SpawnAndPossessPlayerCustomizer(const int32 PlayerIndex);
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Info")
+	TSubclassOf<APlayerFarmerCharacter> CharacterToSpawn;
 };

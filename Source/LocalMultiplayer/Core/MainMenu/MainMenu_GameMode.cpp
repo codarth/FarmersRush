@@ -2,54 +2,63 @@
 
 
 #include "MainMenu_GameMode.h"
-
-#include "Blueprint/UserWidget.h"
-#include "Components/HorizontalBox.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
-#include "LocalMultiplayer/Character/MainMenu/PlayerCustomizePawn.h"
-#include "LocalMultiplayer/UI/MainMenu/MainMenuWidget.h"
-#include "LocalMultiplayer/UI/MainMenu/PlayerSlot.h"
+#include "LocalMultiplayer/Camera/MainMenuCamera.h"
+#include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 
 void AMainMenu_GameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const auto PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-	(MainMenuWidget = CreateWidget<UMainMenuWidget>(GetWorld(), MainMenuWidgetClass))->AddToViewport();
-
-	PlayerController->SetInputMode(FInputModeGameAndUI());
-	PlayerController->bShowMouseCursor = true;
-
-	auto PlayerSlots = MainMenuWidget->PlayerSlotBox->GetAllChildren();
-	if (PlayerSlots.Num() > 0)
+	// Get all GameCamera actors
+	TArray<AActor*> GameCameras;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMainMenuCamera::StaticClass(), GameCameras);
+	if (GameCameras.Num() > 0)
 	{
-		for (const auto Widget : PlayerSlots)
-		{
-			if(const auto Slot = Cast<UPlayerSlot>(Widget))
-			{
-				if (!UGameplayStatics::GetPlayerController(this, Slot->PlayerIndex))
-				{
-					UGameplayStatics::CreatePlayer(this, Slot->PlayerIndex,true);
-				}
+		CameraRef = Cast<AMainMenuCamera>(GameCameras[0]);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No GameCamera found!"));
+	}	
+	
+	// Get all player starts
+	TArray<AActor*> PlayerStarts;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 
-				SpawnAndPossessPlayerCustomizer(Slot->PlayerIndex);
+	// For each player start create a player controller
+	for (auto* PlayerStart : PlayerStarts)
+	{
+		const int32 Index = FCString::Atoi(*Cast<APlayerStart>(PlayerStart)->PlayerStartTag.ToString());;
+
+		if (PlayerStart)
+		{
+			// Create a new player if not already created for this player start
+			if (!UGameplayStatics::GetPlayerController(this, Index))
+			{
+				UGameplayStatics::CreatePlayer(this, Index, true);
 			}
+
+			SpawnAndPossessCharacter(PlayerStart, Index);
 		}
 	}
 }
 
-void AMainMenu_GameMode::SpawnAndPossessPlayerCustomizer(const int32 PlayerIndex)
+APlayerFarmerCharacter* AMainMenu_GameMode::SpawnAndPossessCharacter(const AActor* PlayerStart, const int32 Index)
 {
-	PlayerCustomizerPawn = GetWorld()->SpawnActorDeferred<APlayerCustomizePawn>(PlayerCustomizerPawnClass, FTransform::Identity);
-	PlayerCustomizerPawn->SetPlayerIndex(PlayerIndex);
+	const auto Character = GetWorld()->SpawnActorDeferred<APlayerFarmerCharacter>(CharacterToSpawn, PlayerStart->GetTransform());
 
-	auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
-	PC->Possess(PlayerCustomizerPawn);
+	const auto PlayerController = UGameplayStatics::GetPlayerController(this, Index);
+	if (PlayerController)
+	{
+		PlayerController->Possess(Character);
+	}
 
-	PlayerCustomizerPawn->FinishSpawning(FTransform::Identity);
+	Character->FinishSpawning(PlayerStart->GetTransform());
 
-	PlayerCustomizers.AddUnique(PlayerCustomizerPawn);
+	PlayerController->SetViewTarget(CameraRef);
+	
+	return Character;
 }
-
-
 
