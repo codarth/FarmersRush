@@ -23,6 +23,10 @@ class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	// Deactivate Player Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DeactivatePlayerAction;
+
 public:
 	// Sets default values for this character's properties
 	APlayerFarmerCharacter();
@@ -33,6 +37,9 @@ protected:
 
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
+
+	// Called for Deactivate Player input
+	void DeactivatePlayer(const FInputActionValue& Value);
 
 public:
 	// Called every frame

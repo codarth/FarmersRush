@@ -41,7 +41,13 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Character Info")
 	TArray<APlayerFarmerCharacter*> CurrentCharacters;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Character Info")
+	TArray<APlayerInputDummy*> CurrentDummies;
+
 	UFUNCTION()
 	void SpawnCharacterAtDummy(const APlayerInputDummy* Dummy, const int32 PlayerIndex);
+
+	UFUNCTION()
+	void DeactivatePlayer(const int32 PlayerIndex);
 	
 };

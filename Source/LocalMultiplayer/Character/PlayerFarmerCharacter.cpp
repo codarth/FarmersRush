@@ -4,6 +4,9 @@
 #include "PlayerFarmerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
+#include "LocalMultiplayer/ZZZTesting/GameMode_FR.h"
 
 
 // Sets default values
@@ -40,6 +43,7 @@ void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::Move);
+		Input->BindAction(DeactivatePlayerAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::DeactivatePlayer);
 	}
 }
 
@@ -63,6 +67,15 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
+	}
+}
+
+void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
+{
+	auto GM = Cast<AMainMenu_GameMode>(UGameplayStatics::GetGameMode(this));
+	if (GM)
+	{
+		GM->DeactivatePlayer(PlayerIndex);
 	}
 }
 

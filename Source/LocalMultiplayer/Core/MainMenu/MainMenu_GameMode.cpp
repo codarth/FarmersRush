@@ -56,6 +56,8 @@ APlayerInputDummy* AMainMenu_GameMode::SpawnAndPossessDummy(const AActor* Player
 
 	Dummy->FinishSpawning(PlayerStart->GetTransform());
 
+	CurrentDummies.AddUnique(Dummy);
+	
 	PC->SetViewTarget(CameraRef);
 
 	return Dummy;
@@ -71,6 +73,30 @@ void AMainMenu_GameMode::SpawnCharacterAtDummy(const APlayerInputDummy* Dummy, c
 	
 	const auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
 	PC->Possess(Character);
+	PC->SetViewTarget(CameraRef);
+}
+
+void AMainMenu_GameMode::DeactivatePlayer(const int32 PlayerIndex)
+{
+	const auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
+
+	for (auto Dummy : CurrentDummies)
+	{
+		if (Dummy->PlayerIndex == PlayerIndex)
+		{
+			PC->Possess(Dummy);
+			for (auto Character : CurrentCharacters)
+			{
+				if (Character->PlayerIndex == PlayerIndex)
+				{
+					CurrentCharacters.Remove(Character);
+					Character->Destroy();
+					break;
+				}
+			}
+			break;
+		}
+	}
 	PC->SetViewTarget(CameraRef);
 }
 
