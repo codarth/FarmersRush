@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Camera/MainMenuCamera.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
+#include "LocalMultiplayer/Character/MainMenu/PlayerInputDummy.h"
 
 void AMainMenu_GameMode::BeginPlay()
 {
@@ -40,25 +41,36 @@ void AMainMenu_GameMode::BeginPlay()
 				UGameplayStatics::CreatePlayer(this, Index, true);
 			}
 
-			SpawnAndPossessCharacter(PlayerStart, Index);
+			SpawnAndPossessDummy(PlayerStart, Index);
 		}
 	}
 }
 
-APlayerFarmerCharacter* AMainMenu_GameMode::SpawnAndPossessCharacter(const AActor* PlayerStart, const int32 Index)
+APlayerInputDummy* AMainMenu_GameMode::SpawnAndPossessDummy(const AActor* PlayerStart, const int32 Index)
 {
-	const auto Character = GetWorld()->SpawnActorDeferred<APlayerFarmerCharacter>(CharacterToSpawn, PlayerStart->GetTransform());
+	// Spawn the dummy
+	const auto Dummy = GetWorld()->SpawnActorDeferred<APlayerInputDummy>(DummyToSpawn, PlayerStart->GetTransform());
 
-	const auto PlayerController = UGameplayStatics::GetPlayerController(this, Index);
-	if (PlayerController)
-	{
-		PlayerController->Possess(Character);
-	}
+	auto PC = UGameplayStatics::GetPlayerController(this, Index);
+	PC->Possess(Dummy);
 
-	Character->FinishSpawning(PlayerStart->GetTransform());
+	Dummy->FinishSpawning(PlayerStart->GetTransform());
 
-	PlayerController->SetViewTarget(CameraRef);
+	PC->SetViewTarget(CameraRef);
+
+	return Dummy;
+}
+
+void AMainMenu_GameMode::SpawnCharacterAtDummy(const APlayerInputDummy* Dummy, const int32 PlayerIndex)
+{
+	const auto Character = GetWorld()->SpawnActorDeferred<APlayerFarmerCharacter>(CharacterToSpawn, Dummy->GetTransform());
+	Character->PlayerIndex = PlayerIndex;
+	Character->FinishSpawning(Dummy->GetTransform());
 	
-	return Character;
+	CurrentCharacters.AddUnique(Character);
+	
+	const auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
+	PC->Possess(Character);
+	PC->SetViewTarget(CameraRef);
 }
 

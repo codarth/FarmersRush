@@ -3,40 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "PlayerFarmerCharacter.generated.h"
+#include "GameFramework/Pawn.h"
+#include "PlayerInputDummy.generated.h"
 
+class APlayerFarmerCharacter;
 struct FInputActionValue;
-class UInputAction;
-class UInputMappingContext;
 
 UCLASS()
-class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter
+class LOCALMULTIPLAYER_API APlayerInputDummy : public APawn
 {
 	GENERATED_BODY()
 
 	// Mapping context
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* MappingContext;
+	class UInputMappingContext* MappingContext;
 
-	// Move Forward Input Action
+	// Activate player input
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-public:
-	// Sets default values for this character's properties
-	APlayerFarmerCharacter();
-
+	class UInputAction* ActivatePlayerAction;
+	
 protected:
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called for Move Forward input
-	void Move(const FInputActionValue& Value);
-
+	// Called for Activate Player input
+	void ActivatePlayer(const FInputActionValue& Value);
+	
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
