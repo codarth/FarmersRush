@@ -50,7 +50,8 @@ APlayerInputDummy* AMainMenu_GameMode::SpawnAndPossessDummy(const AActor* Player
 {
 	// Spawn the dummy
 	const auto Dummy = GetWorld()->SpawnActorDeferred<APlayerInputDummy>(DummyToSpawn, PlayerStart->GetTransform());
-
+	Dummy->PlayerIndex = Index;
+	
 	auto PC = UGameplayStatics::GetPlayerController(this, Index);
 	PC->Possess(Dummy);
 
