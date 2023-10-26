@@ -6,13 +6,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenu_GameMode.generated.h"
 
+class UMainMenu_UI;
 class APlayerInputDummy;
 class AMainMenuCamera;
 class APlayerFarmerCharacter;
 class APlayerCustomizePawn;
 class UInputMappingContext;
 class UInputAction;
-class UMainMenuWidget;
 
 /**
  * 
@@ -28,7 +28,8 @@ class LOCALMULTIPLAYER_API AMainMenu_GameMode : public AGameModeBase
 	virtual void BeginPlay() override;
 
 public:
-	
+	virtual void Tick(float DeltaSeconds) override;
+
 	UPROPERTY()
 	AMainMenuCamera* CameraRef;
 
@@ -49,5 +50,23 @@ public:
 
 	UFUNCTION()
 	void DeactivatePlayer(const int32 PlayerIndex);
+
+private:
+	void BeginCountdown();
+
+	void UpdateTimer();
+
+	void StopCountdown();
+
+	void StartGame();
+
+	FTimerHandle CountdownTimerHandle;
 	
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Countdown")
+	TSubclassOf<UMainMenu_UI> MainMenuWidgetClass;
+	
+	UPROPERTY()
+	UMainMenu_UI* MainMenuWidget;
 };

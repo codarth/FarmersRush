@@ -51,4 +51,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
 
+	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
+	bool bIsPlayerReady = false;
+
 };
