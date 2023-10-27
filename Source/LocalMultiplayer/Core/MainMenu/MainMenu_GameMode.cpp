@@ -4,12 +4,18 @@
 #include "MainMenu_GameMode.h"
 
 #include "Components/Border.h"
+#include "Components/TextBlock.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Camera/MainMenuCamera.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 #include "LocalMultiplayer/Character/MainMenu/PlayerInputDummy.h"
 #include "LocalMultiplayer/UI/MainMenu_UI.h"
+
+AMainMenu_GameMode::AMainMenu_GameMode()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
 
 void AMainMenu_GameMode::BeginPlay()
 {
@@ -60,29 +66,32 @@ void AMainMenu_GameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	// get all player pawns
-	TArray<AActor*> PlayerPawns;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerFarmerCharacter::StaticClass(), PlayerPawns);
-	// loop through to see if all are ready
-	int32 NumReady = 0;
-	for (const auto Pawn : PlayerPawns)
+	if (!bStartingGame)
 	{
-		if (const auto Character = Cast<APlayerFarmerCharacter>(Pawn))
+		// get all player pawns
+		TArray<AActor*> PlayerPawns;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerFarmerCharacter::StaticClass(), PlayerPawns);
+		// loop through to see if all are ready
+		int32 NumReady = 0;
+		for (const auto Pawn : PlayerPawns)
 		{
-			if (Character->bIsPlayerReady)
+			if (const auto Character = Cast<APlayerFarmerCharacter>(Pawn))
 			{
-				NumReady++;
+				if (Character->bIsPlayerReady)
+				{
+					NumReady++;
+				}
 			}
 		}
-	}
 
-	if (NumReady == PlayerPawns.Num())
-	{
-		BeginCountdown();
-	}
-	else
-	{
-		StopCountdown();
+		if (PlayerPawns.Num() > 0 && NumReady == PlayerPawns.Num())
+		{
+			BeginCountdown();
+		}
+		else
+		{
+			StopCountdown();
+		}
 	}
 }
 
@@ -143,17 +152,19 @@ void AMainMenu_GameMode::DeactivatePlayer(const int32 PlayerIndex)
 
 void AMainMenu_GameMode::BeginCountdown()
 {
-	if (MainMenuWidget)
+	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(CountdownTimerHandle))
 	{
+		MainMenuWidget->CurrentCountdownTime = MainMenuWidget->CountdownTime;
+		MainMenuWidget->UpdateCountdown();
 		MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Visible);
-		GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &AMainMenu_GameMode::UpdateTimer, 1.0f, false, 1.0f);
+		GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &AMainMenu_GameMode::UpdateTimer, 1.0f, true);
 	}
 }
 
 void AMainMenu_GameMode::UpdateTimer()
 {
 	MainMenuWidget->UpdateCountdown();
-	if (MainMenuWidget->CurrentCountdownTime <= 0)
+	if (MainMenuWidget->CurrentCountdownTime < 0)
 	{
 		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
 		StartGame();
@@ -171,6 +182,8 @@ void AMainMenu_GameMode::StopCountdown()
 void AMainMenu_GameMode::StartGame()
 {
 	// TODO: Start the game
+	bStartingGame = true;
+	MainMenuWidget->CountdownText->SetText(FText::FromString("Let the farming commence!")); // TODO: Random saying
 	UE_LOG(LogTemp, Warning, TEXT("Game started!"));
 	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));
 }

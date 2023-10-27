@@ -35,4 +35,8 @@ public:
 
 	UFUNCTION()
 	void UpdateCountdown();
+
+private:
+
+	bool bInitialUpdate = true;
 };

@@ -13,4 +13,9 @@ void UMainMenu_UI::NativeConstruct()
 void UMainMenu_UI::UpdateCountdown()
 {
 	CountdownText->SetText(FText::FromString(FString::FromInt(CurrentCountdownTime)));
+	if (!bInitialUpdate)
+	{
+		CurrentCountdownTime -= 1;
+	}
+	bInitialUpdate = false;
 }

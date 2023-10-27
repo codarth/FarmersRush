@@ -28,6 +28,9 @@ class LOCALMULTIPLAYER_API AMainMenu_GameMode : public AGameModeBase
 	virtual void BeginPlay() override;
 
 public:
+
+	AMainMenu_GameMode();
+	
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY()
@@ -61,6 +64,8 @@ private:
 	void StartGame();
 
 	FTimerHandle CountdownTimerHandle;
+
+	bool bStartingGame = false;
 	
 public:
 
