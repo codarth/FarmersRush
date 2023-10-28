@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenu_UI.generated.h"
 
+class UMenuAnchor;
+class UPlayerInfo_UI;
 class UBorder;
 class UTextBlock;
 
@@ -32,6 +34,15 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Counddown")
 	int32 CurrentCountdownTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
+	UPlayerInfo_UI* PlayerInfo_1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
+	UPlayerInfo_UI* PlayerInfo_2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
+	UPlayerInfo_UI* PlayerInfo_3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
+	UPlayerInfo_UI* PlayerInfo_4;
 
 	UFUNCTION()
 	void UpdateCountdown();

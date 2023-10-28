@@ -3,11 +3,13 @@
 
 #include "MainMenu_UI.h"
 
+#include "PlayerInfo_UI.h"
+#include "Components/Border.h"
 #include "Components/TextBlock.h"
 
 void UMainMenu_UI::NativeConstruct()
 {
-	Super::NativeConstruct();
+	CountdownBorder->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenu_UI::UpdateCountdown()

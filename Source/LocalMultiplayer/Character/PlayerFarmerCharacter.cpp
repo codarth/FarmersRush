@@ -27,7 +27,7 @@ void APlayerFarmerCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
-	}	
+	}
 }
 
 // Called every frame

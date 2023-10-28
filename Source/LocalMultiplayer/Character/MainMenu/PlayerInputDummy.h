@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "PlayerInputDummy.generated.h"
 
+class UPlayerInfo_UI;
 class APlayerFarmerCharacter;
 struct FInputActionValue;
 
@@ -38,4 +39,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
+	UMaterialInstance* PlayerDefaultColor;
 };

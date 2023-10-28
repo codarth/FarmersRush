@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerFarmerCharacter.generated.h"
 
+class UPlayerInfo_UI;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
@@ -51,7 +52,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
+	UMaterialInstance* PlayerDefaultColor;
+
 	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
 	bool bIsPlayerReady = false;
-
 };

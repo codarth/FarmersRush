@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "LocalMultiplayer/UI/MainMenu/PlayerInfo_UI.h"
 #include "MainMenu_GameMode.generated.h"
 
 class UMainMenu_UI;
@@ -32,6 +33,7 @@ public:
 	AMainMenu_GameMode();
 	
 	virtual void Tick(float DeltaSeconds) override;
+	void SetupPlayerInfoUI(int32 Index, APlayerController* PC);
 
 	UPROPERTY()
 	AMainMenuCamera* CameraRef;
@@ -63,6 +65,9 @@ private:
 
 	void StartGame();
 
+	void TransitionToGame();
+	void ActivatePlayerUI(int32 Index, APlayerController* PC, UPlayerInfo_UI* UI);
+
 	FTimerHandle CountdownTimerHandle;
 
 	bool bStartingGame = false;
@@ -74,4 +79,7 @@ public:
 	
 	UPROPERTY()
 	UMainMenu_UI* MainMenuWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerInfo")
+	TArray<UMaterialInstance*> PlayerColors;
 };
