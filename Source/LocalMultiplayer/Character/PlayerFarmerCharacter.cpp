@@ -4,6 +4,8 @@
 #include "PlayerFarmerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
 
@@ -77,4 +79,21 @@ void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 		GM->DeactivatePlayer(PlayerIndex);
 	}
 }
+
+void APlayerFarmerCharacter::AddCamera()
+{
+	const auto SpringArm = NewObject<USpringArmComponent>(this, USpringArmComponent::StaticClass(), FName("Boom"));
+	SpringArm->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	SpringArm->TargetArmLength = 500.f;
+	SpringArm->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	SpringArm->RegisterComponent();
+	AddInstanceComponent(SpringArm);
+
+	const auto Camera = NewObject<UCameraComponent>(SpringArm, UCameraComponent::StaticClass(), FName("Camera"));
+	Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
+	Camera->RegisterComponent();
+	AddInstanceComponent(Camera);
+}
+
+
 

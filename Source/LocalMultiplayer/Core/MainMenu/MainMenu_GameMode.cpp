@@ -204,7 +204,7 @@ void AMainMenu_GameMode::TransitionToGame()
 	MainMenuWidget->RemoveFromParent();
 	MainMenuWidget = nullptr;
 
-	
+	UGameplayStatics::OpenLevel(GetWorld(), MainLevelName);
 }
 
 void AMainMenu_GameMode::ActivatePlayerUI(const int32 Index, APlayerController* const PC, UPlayerInfo_UI* const UI)

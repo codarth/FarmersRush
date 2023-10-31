@@ -82,4 +82,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerInfo")
 	TArray<UMaterialInstance*> PlayerColors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelInfo")
+	FName MainLevelName;
 };
