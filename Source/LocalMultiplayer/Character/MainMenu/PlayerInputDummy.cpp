@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
+#include "..\..\Core\FarmersRush_GameMode.h"
 #include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
 
 
@@ -34,7 +35,7 @@ void APlayerInputDummy::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void APlayerInputDummy::ActivatePlayer(const FInputActionValue& Value)
 {
-	auto GM = Cast<AMainMenu_GameMode>(UGameplayStatics::GetGameMode(this));
+	const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM)
 	{
 		GM->SpawnCharacterAtDummy(this, PlayerIndex);

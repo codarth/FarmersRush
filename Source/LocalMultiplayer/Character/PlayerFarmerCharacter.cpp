@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "..\Core\FarmersRush_GameMode.h"
 #include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
 
 
@@ -73,7 +74,7 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 {
-	auto GM = Cast<AMainMenu_GameMode>(UGameplayStatics::GetGameMode(this));
+	const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM)
 	{
 		GM->DeactivatePlayer(PlayerIndex);
