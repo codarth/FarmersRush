@@ -74,10 +74,12 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 {
-	const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
-	if (GM)
+	if (const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this)))
 	{
-		GM->DeactivatePlayer(PlayerIndex);
+		if (!GM->bStartingGame)
+		{
+			GM->DeactivatePlayer(PlayerIndex);
+		}
 	}
 }
 

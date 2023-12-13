@@ -21,6 +21,8 @@ class LOCALMULTIPLAYER_API AFarmersRush_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	AFarmersRush_GameMode();
+
 	UFUNCTION()
 	APlayerInputDummy* SpawnAndPossessDummy(const AActor* PlayerStart, const int32 Index);
 
@@ -32,7 +34,7 @@ public:
 	void SetupPlayerInfoUI(int32 Index, const APlayerController* PC);
 
 	UPROPERTY()
-	AMainMenuCamera* CameraRef;
+	AMainMenuCamera* CameraRef = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Info")
 	TSubclassOf<APlayerInputDummy> DummyToSpawn;
@@ -64,22 +66,35 @@ private:
 	void TransitionToGame();
 	void ActivatePlayerUI(int32 Index, const APlayerController* PC, UPlayerInfo_UI* UI);
 
+	void FadeCamera(bool bFadeIn = false);
+	
+	void LevelLoading();
+	void LoadLevel();
+	void UnloadLevel();
+
+	void AdjustCharacterLocation();
+
 	FTimerHandle CountdownTimerHandle;
+	FTimerHandle LoadLevelTimer;
+	FTimerHandle UnloadLevelTimer;
+
+public:
 
 	bool bStartingGame = false;
-	
-public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Countdown")
 	TSubclassOf<UMainMenu_UI> MainMenuWidgetClass;
 	
 	UPROPERTY()
-	UMainMenu_UI* MainMenuWidget;
+	UMainMenu_UI* MainMenuWidget = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerInfo")
 	TArray<UMaterialInstance*> PlayerColors;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelInfo")
-	FName MainLevelName;
+	FName MainMenuLevelName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelInfo")
+	TArray<FName> MainLevelNames;
 
 };

@@ -13,6 +13,11 @@
 #include "LocalMultiplayer/UI/MainMenu/MainMenu_UI.h"
 #include "LocalMultiplayer/UI/MainMenu/PlayerInfo_UI.h"
 
+AFarmersRush_GameMode::AFarmersRush_GameMode()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 void AFarmersRush_GameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -198,7 +203,71 @@ void AFarmersRush_GameMode::TransitionToGame()
 	MainMenuWidget->RemoveFromParent();
 	MainMenuWidget = nullptr;
 
-	UGameplayStatics::OpenLevel(GetWorld(), MainLevelName);
+	LevelLoading();
+}
+
+void AFarmersRush_GameMode::FadeCamera(bool bFadeIn /*= false*/)
+{
+	for (auto Character : CurrentCharacters)
+	{
+		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
+		{
+			if (bFadeIn)
+			{
+				PC->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 2.0f, FLinearColor::Black, false, true);
+			}
+			else
+			{
+				PC->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, 1.5f, FLinearColor::Black, false, true);
+			}
+		}
+	}
+}
+
+void AFarmersRush_GameMode::LevelLoading()
+{
+	FadeCamera();
+	GetWorldTimerManager().SetTimer(LoadLevelTimer, this, &AFarmersRush_GameMode::LoadLevel, 1.6f, false);
+	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadLevel, 1.6f, false);
+}
+
+void AFarmersRush_GameMode::LoadLevel()
+{
+	const auto LevelToLoad = MainLevelNames[CurrentCharacters.Num() - 1];
+
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	LatentInfo.UUID = 1;
+	UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
+
+	AdjustCharacterLocation();
+	
+	FadeCamera(true);
+}
+
+void AFarmersRush_GameMode::UnloadLevel()
+{
+	const FLatentActionInfo LatentInfo;
+	UGameplayStatics::UnloadStreamLevel(this, MainMenuLevelName, LatentInfo, true);
+}
+
+void AFarmersRush_GameMode::AdjustCharacterLocation()
+{
+	for (auto Character : CurrentCharacters)
+	{
+		TArray<AActor*> PlayerStarts;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+
+		for (auto* PlayerStart : PlayerStarts)
+		{
+			const int32 Index = FCString::Atoi(*Cast<APlayerStart>(PlayerStart)->PlayerStartTag.ToString());
+
+			if (PlayerStart && Index == Character->PlayerIndex)
+			{
+				Character->SetActorLocation(PlayerStart->GetActorLocation());
+			}
+		}
+	}
 }
 
 void AFarmersRush_GameMode::ActivatePlayerUI(const int32 Index, const APlayerController* PC, UPlayerInfo_UI* const UI)
