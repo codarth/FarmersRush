@@ -49,7 +49,7 @@ public:
 	TArray<APlayerInputDummy*> CurrentDummies;
 
 	UFUNCTION()
-	void SpawnCharacterAtDummy(const APlayerInputDummy* Dummy, const int32 PlayerIndex);
+	void SpawnCharacterAtDummy(APlayerInputDummy* Dummy, const int32 PlayerIndex);
 
 	UFUNCTION()
 	void DeactivatePlayer(const int32 PlayerIndex);
@@ -67,7 +67,9 @@ private:
 	void ActivatePlayerUI(int32 Index, const APlayerController* PC, UPlayerInfo_UI* UI);
 
 	void FadeCamera(bool bFadeIn = false);
-	
+	void SetupPlayerCamera();
+	void CleanupDummies();
+
 	void LevelLoading();
 	void LoadLevel();
 	void UnloadLevel();
@@ -77,6 +79,7 @@ private:
 	FTimerHandle CountdownTimerHandle;
 	FTimerHandle LoadLevelTimer;
 	FTimerHandle UnloadLevelTimer;
+	FTimerHandle DummyCleanupTimer;
 
 public:
 

@@ -40,7 +40,10 @@ void AFarmersRush_GameMode::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("No GameCamera found!"));
 	}	
-	
+
+	// Disable splitscreen
+	GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(true);
+
 	// Get all player starts
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
@@ -102,6 +105,7 @@ APlayerInputDummy* AFarmersRush_GameMode::SpawnAndPossessDummy(const AActor* Pla
 	const auto Dummy = GetWorld()->SpawnActorDeferred<APlayerInputDummy>(DummyToSpawn, PlayerStart->GetTransform());
 	Dummy->PlayerIndex = Index;
 	Dummy->PlayerDefaultColor = PlayerColors[Index];
+	Dummy->bCanActivate = true;
 	
 	const auto PC = UGameplayStatics::GetPlayerController(this, Index);
 	PC->Possess(Dummy);
@@ -117,12 +121,14 @@ APlayerInputDummy* AFarmersRush_GameMode::SpawnAndPossessDummy(const AActor* Pla
 	return Dummy;
 }
 
-void AFarmersRush_GameMode::SpawnCharacterAtDummy(const APlayerInputDummy* Dummy, const int32 PlayerIndex)
+void AFarmersRush_GameMode::SpawnCharacterAtDummy(APlayerInputDummy* Dummy, const int32 PlayerIndex)
 {
 	const auto Character = GetWorld()->SpawnActorDeferred<APlayerFarmerCharacter>(CharacterToSpawn, Dummy->GetTransform());
 	Character->PlayerIndex = PlayerIndex;
 	Character->PlayerDefaultColor = Dummy->PlayerDefaultColor;
 	Character->FinishSpawning(Dummy->GetTransform());
+
+	Dummy->bCanActivate = false;
 	
 	CurrentCharacters.AddUnique(Character);
 	
@@ -224,11 +230,54 @@ void AFarmersRush_GameMode::FadeCamera(bool bFadeIn /*= false*/)
 	}
 }
 
+void AFarmersRush_GameMode::SetupPlayerCamera()
+{
+	// Add Camera to player and set it as view target
+	for (const auto Character : CurrentCharacters)
+	{
+		Character->AddCamera();
+				
+		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
+		{
+			PC->SetViewTarget(Character);
+		}
+	}
+}
+
+void AFarmersRush_GameMode::CleanupDummies()
+{
+	for (const auto Dummy : CurrentDummies)
+	{
+		Dummy->SetActorTickEnabled(false);
+	}
+
+	// Disable all dummy controllers
+	for (const auto Dummy : CurrentDummies)
+	{
+		//Get controller and remove it
+		if (const auto PC = UGameplayStatics::GetPlayerController(this, Dummy->PlayerIndex))
+		{
+			if(Cast<APlayerInputDummy>(PC->GetPawn()))
+			{				
+				PC->UnPossess();
+				PC->Destroy();
+			}
+		}
+		// Delete All Dummies
+		Dummy->Destroy();
+	}
+	CurrentDummies.Empty();
+
+	GEngine->ForceGarbageCollection();
+}
+
 void AFarmersRush_GameMode::LevelLoading()
 {
 	FadeCamera();
-	GetWorldTimerManager().SetTimer(LoadLevelTimer, this, &AFarmersRush_GameMode::LoadLevel, 1.6f, false);
-	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadLevel, 1.6f, false);
+
+	GetWorldTimerManager().SetTimer(DummyCleanupTimer, this, &AFarmersRush_GameMode::CleanupDummies, 1.5f, false);
+	GetWorldTimerManager().SetTimer(LoadLevelTimer, this, &AFarmersRush_GameMode::LoadLevel, 2.5f, false);
+	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadLevel, 2.5f, false);
 }
 
 void AFarmersRush_GameMode::LoadLevel()
@@ -240,7 +289,14 @@ void AFarmersRush_GameMode::LoadLevel()
 	LatentInfo.UUID = 1;
 	UGameplayStatics::LoadStreamLevel(this, LevelToLoad, true, true, LatentInfo);
 
+	if (CurrentCharacters.Num() > 1)
+	{
+		// Enable splitscreen
+		GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(false);
+	}
+
 	AdjustCharacterLocation();
+	SetupPlayerCamera();
 	
 	FadeCamera(true);
 }

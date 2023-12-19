@@ -7,8 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "..\Core\FarmersRush_GameMode.h"
-#include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
+#include "../Core/FarmersRush_GameMode.h"
 
 
 // Sets default values
@@ -31,6 +30,8 @@ void APlayerFarmerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 	}
+
+	GetMesh()->SetMaterial(1, PlayerDefaultColor);
 }
 
 // Called every frame

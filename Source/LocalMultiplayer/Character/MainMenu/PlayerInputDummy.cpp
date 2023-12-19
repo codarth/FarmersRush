@@ -35,14 +35,17 @@ void APlayerInputDummy::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 void APlayerInputDummy::ActivatePlayer(const FInputActionValue& Value)
 {
-	const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
-	if (GM)
+	if (bCanActivate)
 	{
-		GM->SpawnCharacterAtDummy(this, PlayerIndex);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to get GameMode"));
+		const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
+		if (GM)
+		{
+			GM->SpawnCharacterAtDummy(this, PlayerIndex);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to get GameMode"));
+		}
 	}
 }
 

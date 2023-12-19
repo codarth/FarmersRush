@@ -22,7 +22,7 @@ class LOCALMULTIPLAYER_API APlayerInputDummy : public APawn
 	// Activate player input
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ActivatePlayerAction;
-	
+
 protected:
 	
 	// Called when the game starts or when spawned
@@ -41,4 +41,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info")
 	UMaterialInstance* PlayerDefaultColor;
+
+	// Is the Dummy being controlled by the player controller
+	bool bCanActivate = false;
 };
