@@ -2,6 +2,8 @@
 
 
 #include "FarmersRush_GameMode.h"
+
+#include "CustomGameViewportClient.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
@@ -292,7 +294,9 @@ void AFarmersRush_GameMode::LoadLevel()
 	if (CurrentCharacters.Num() > 1)
 	{
 		// Enable splitscreen
-		GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(false);
+		auto Viewport = GetWorld()->GetGameViewport();
+		Viewport->SetForceDisableSplitscreen(false);
+		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
 	}
 
 	AdjustCharacterLocation();
