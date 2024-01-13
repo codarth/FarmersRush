@@ -150,6 +150,8 @@ void AFarmersRush_GameMode::DeactivatePlayer(const int32 PlayerIndex)
 		if (Dummy->PlayerIndex == PlayerIndex)
 		{
 			PC->Possess(Dummy);
+			Dummy->bCanActivate = true;
+			
 			for (const auto Character : CurrentCharacters)
 			{
 				if (Character->PlayerIndex == PlayerIndex)
@@ -296,7 +298,7 @@ void AFarmersRush_GameMode::LoadLevel()
 		// Enable splitscreen
 		auto Viewport = GetWorld()->GetGameViewport();
 		Viewport->SetForceDisableSplitscreen(false);
-		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
+		//Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
 	}
 
 	AdjustCharacterLocation();

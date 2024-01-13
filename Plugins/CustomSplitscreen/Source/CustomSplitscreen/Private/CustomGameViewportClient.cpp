@@ -29,11 +29,7 @@ void UCustomGameViewportClient::UpdateActiveSplitscreenType()
 {
 	// ECustomSplitscreenType::Type SplitscreenType = ECustomSplitscreenType::None;
 	// const int32 NumPlayers = GEngine->GetNumGamePlayers(GetWorld());
-
 	
-
-	UE_LOG(LogTemp, Warning, TEXT("NumPlayers: %d"), ActivePlayers);
-
 	switch (ActivePlayers)
 	{
 	case 2:

@@ -5,8 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
-#include "..\..\Core\FarmersRush_GameMode.h"
-#include "LocalMultiplayer/Core/MainMenu/MainMenu_GameMode.h"
+#include "../../Core/FarmersRush_GameMode.h"
 
 
 // Called when the game starts or when spawned
