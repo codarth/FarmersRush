@@ -298,7 +298,7 @@ void AFarmersRush_GameMode::LoadLevel()
 		// Enable splitscreen
 		auto Viewport = GetWorld()->GetGameViewport();
 		Viewport->SetForceDisableSplitscreen(false);
-		//Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
+		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
 	}
 
 	AdjustCharacterLocation();
