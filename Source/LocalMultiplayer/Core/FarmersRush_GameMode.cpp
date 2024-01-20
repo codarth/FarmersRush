@@ -90,13 +90,16 @@ void AFarmersRush_GameMode::Tick(float DeltaSeconds)
 			}
 		}
 
-		if (PlayerPawns.Num() > 0 && NumReady == PlayerPawns.Num())
+		if (!QuitCountdownTimerHandle.IsValid())
 		{
-			BeginCountdown();
-		}
-		else
-		{
-			StopCountdown();
+			if (PlayerPawns.Num() > 0 && NumReady == PlayerPawns.Num())
+			{
+				BeginStartCountdown();
+			}
+			else
+			{
+				StopStartCountdown();
+			}
 		}
 	}
 }
@@ -168,33 +171,60 @@ void AFarmersRush_GameMode::DeactivatePlayer(const int32 PlayerIndex)
 	PC->SetViewTarget(CameraRef);
 }
 
-void AFarmersRush_GameMode::BeginCountdown()
+void AFarmersRush_GameMode::BeginQuitCountdown()
 {
-	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(CountdownTimerHandle))
+	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(QuitCountdownTimerHandle))
 	{
-		MainMenuWidget->CurrentCountdownTime = MainMenuWidget->CountdownTime;
-		MainMenuWidget->UpdateCountdown();
+		MainMenuWidget->ResetCountdown();
+		MainMenuWidget->UpdateCountdown(false);
 		MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Visible);
-		GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &AFarmersRush_GameMode::UpdateTimer, 1.0f, true);
+		GetWorldTimerManager().SetTimer(QuitCountdownTimerHandle, this, &AFarmersRush_GameMode::UpdateQuitTimer, 1.0f, true);
 	}
 }
 
-void AFarmersRush_GameMode::UpdateTimer()
+void AFarmersRush_GameMode::UpdateQuitTimer()
 {
-	MainMenuWidget->UpdateCountdown();
+	MainMenuWidget->UpdateCountdown(false);
 	if (MainMenuWidget->CurrentCountdownTime < 0)
 	{
-		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
+		// Exit the game
+		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
+	}
+}
+
+void AFarmersRush_GameMode::StopQuitCountdown()
+{
+	MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Hidden);
+	GetWorldTimerManager().ClearTimer(QuitCountdownTimerHandle);
+	MainMenuWidget->ResetCountdown();
+}
+
+void AFarmersRush_GameMode::BeginStartCountdown()
+{
+	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(StartCountdownTimerHandle))
+	{
+		MainMenuWidget->ResetCountdown();
+		MainMenuWidget->UpdateCountdown(true);
+		MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Visible);
+		GetWorldTimerManager().SetTimer(StartCountdownTimerHandle, this, &AFarmersRush_GameMode::UpdateStartTimer, 1.0f, true);
+	}
+}
+
+void AFarmersRush_GameMode::UpdateStartTimer()
+{
+	MainMenuWidget->UpdateCountdown(true);
+	if (MainMenuWidget->CurrentCountdownTime < 0)
+	{
+		GetWorldTimerManager().ClearTimer(StartCountdownTimerHandle);
 		StartGame();
 	}
 }
 
-void AFarmersRush_GameMode::StopCountdown()
+void AFarmersRush_GameMode::StopStartCountdown()
 {
 	MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Hidden);
-	GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
-	MainMenuWidget->CurrentCountdownTime = MainMenuWidget->CountdownTime;
-	
+	GetWorldTimerManager().ClearTimer(StartCountdownTimerHandle);
+	MainMenuWidget->ResetCountdown();
 }
 
 void AFarmersRush_GameMode::StartGame()
@@ -202,7 +232,7 @@ void AFarmersRush_GameMode::StartGame()
 	bStartingGame = true;
 	MainMenuWidget->CountdownText->SetText(FText::FromString("Let the farming commence!")); // TODO: Random saying
 
-	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &AFarmersRush_GameMode::TransitionToGame, 2.0f, false);
+	GetWorldTimerManager().SetTimer(StartCountdownTimerHandle, this, &AFarmersRush_GameMode::TransitionToGame, 2.0f, false);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Game started!"));
 	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));

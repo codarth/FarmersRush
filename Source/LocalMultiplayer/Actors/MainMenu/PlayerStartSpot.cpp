@@ -41,8 +41,7 @@ void APlayerStartSpot::Tick(float DeltaTime)
 
 void APlayerStartSpot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const auto Player = Cast<APlayerFarmerCharacter>(OtherActor);
-	if (Player)
+	if (const auto Player = Cast<APlayerFarmerCharacter>(OtherActor))
 	{
 		StartSpot_Plane->SetMaterial(Player->PlayerIndex, PlayerMaterials[Player->PlayerIndex]);
 		Player->bIsPlayerReady = true;
@@ -51,8 +50,7 @@ void APlayerStartSpot::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 
 void APlayerStartSpot::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	const auto Player = Cast<APlayerFarmerCharacter>(OtherActor);
-	if (Player)
+	if (const auto Player = Cast<APlayerFarmerCharacter>(OtherActor))
 	{
 		StartSpot_Plane->SetMaterial(Player->PlayerIndex, DefaultMaterial);
 		Player->bIsPlayerReady = false;

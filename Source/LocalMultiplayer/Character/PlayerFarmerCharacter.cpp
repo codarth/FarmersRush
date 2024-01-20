@@ -32,6 +32,8 @@ void APlayerFarmerCharacter::BeginPlay()
 	}
 
 	GetMesh()->SetMaterial(1, PlayerDefaultColor);
+
+	GameModeRef = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 // Called every frame
@@ -97,6 +99,21 @@ void APlayerFarmerCharacter::AddCamera()
 	Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
 	Camera->RegisterComponent();
 	AddInstanceComponent(Camera);
+}
+
+void APlayerFarmerCharacter::BeginQuitCountdown()
+{
+	GameModeRef->BeginQuitCountdown();
+}
+
+void APlayerFarmerCharacter::UpdateQuitTimer()
+{
+	GameModeRef->UpdateQuitTimer();
+}
+
+void APlayerFarmerCharacter::StopQuitCountdown()
+{
+	GameModeRef->StopQuitCountdown();
 }
 
 

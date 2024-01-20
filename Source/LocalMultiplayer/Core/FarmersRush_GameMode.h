@@ -54,13 +54,18 @@ public:
 	UFUNCTION()
 	void DeactivatePlayer(const int32 PlayerIndex);
 
+	/** Begin exit countdown */
+	void BeginQuitCountdown();
+	void UpdateQuitTimer();
+	void StopQuitCountdown();
+
+	/** Begin start countdown */
+	void BeginStartCountdown();
+	void UpdateStartTimer();
+	void StopStartCountdown();
+
 private:
-	void BeginCountdown();
-
-	void UpdateTimer();
-
-	void StopCountdown();
-
+	
 	void StartGame();
 
 	void TransitionToGame();
@@ -76,7 +81,8 @@ private:
 
 	void AdjustCharacterLocation();
 
-	FTimerHandle CountdownTimerHandle;
+	FTimerHandle StartCountdownTimerHandle;
+	FTimerHandle QuitCountdownTimerHandle;
 	FTimerHandle LoadLevelTimer;
 	FTimerHandle UnloadLevelTimer;
 	FTimerHandle DummyCleanupTimer;

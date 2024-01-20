@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "LocalMultiplayer/Core/Interfaces/Countdown_Interface.h"
 #include "PlayerFarmerCharacter.generated.h"
 
+class AFarmersRush_GameMode;
 class UPlayerInfo_UI;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 
 UCLASS()
-class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter
+class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public ICountdown_Interface
 {
 	GENERATED_BODY()
 
@@ -42,6 +44,9 @@ protected:
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
 
+	UPROPERTY()
+	AFarmersRush_GameMode* GameModeRef = nullptr;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -51,6 +56,11 @@ public:
 
 	UFUNCTION()
 	void AddCamera();
+
+	/** End Countdown Interface */
+	virtual void BeginQuitCountdown() override;
+	virtual void UpdateQuitTimer() override;
+	virtual void StopQuitCountdown() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
