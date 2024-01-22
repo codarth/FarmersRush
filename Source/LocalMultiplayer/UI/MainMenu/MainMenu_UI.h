@@ -55,12 +55,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Info", meta = (BindWidget))
 	UPlayerInfo_UI* PlayerInfo_4;
 
+
 	UFUNCTION()
 	void UpdateCountdown(bool bIsGameStart);
 	UFUNCTION()
 	void ResetCountdown();
 
+	void SetQuitTo(bool bToMainMenu) { bQuitToMainMenu = bToMainMenu; }
+
 private:
 
+	bool bQuitToMainMenu = false;
 	bool bInitialUpdate = true;
 };

@@ -23,7 +23,7 @@ class LOCALMULTIPLAYER_API ICountdown_Interface
 public:
 
 	/** Exit countdown */
-	virtual void BeginQuitCountdown();
+	virtual void BeginQuitCountdown(bool bToMainMenu);
 	virtual void UpdateQuitTimer();
 	virtual void StopQuitCountdown();
 };

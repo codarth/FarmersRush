@@ -58,7 +58,7 @@ public:
 	void AddCamera();
 
 	/** End Countdown Interface */
-	virtual void BeginQuitCountdown() override;
+	virtual void BeginQuitCountdown(bool bToMainMenu) override;
 	virtual void UpdateQuitTimer() override;
 	virtual void StopQuitCountdown() override;
 

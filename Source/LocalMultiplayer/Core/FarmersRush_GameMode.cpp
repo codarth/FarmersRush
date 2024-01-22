@@ -171,10 +171,11 @@ void AFarmersRush_GameMode::DeactivatePlayer(const int32 PlayerIndex)
 	PC->SetViewTarget(CameraRef);
 }
 
-void AFarmersRush_GameMode::BeginQuitCountdown()
+void AFarmersRush_GameMode::BeginQuitCountdown(bool bToMainMenu)
 {
 	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(QuitCountdownTimerHandle))
 	{
+		MainMenuWidget->SetQuitTo(bToMainMenu);
 		MainMenuWidget->ResetCountdown();
 		MainMenuWidget->UpdateCountdown(false);
 		MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Visible);
@@ -240,6 +241,7 @@ void AFarmersRush_GameMode::StartGame()
 
 void AFarmersRush_GameMode::TransitionToGame()
 {
+	// TODO: do not remove UI, just hide elements not needed in main game
 	MainMenuWidget->RemoveFromParent();
 	MainMenuWidget = nullptr;
 

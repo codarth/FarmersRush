@@ -31,10 +31,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit Spot")
 	UStaticMeshComponent* ExitSpot_Mesh;
 
+	// Decoration to indicate where this exit spot goes to
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit Spot")
+	UStaticMeshComponent* ExitSpot_Destination;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Exit Spot")
+	bool bToMainMenu = false;
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 };

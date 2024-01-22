@@ -55,7 +55,7 @@ public:
 	void DeactivatePlayer(const int32 PlayerIndex);
 
 	/** Begin exit countdown */
-	void BeginQuitCountdown();
+	void BeginQuitCountdown(bool bToMainMenu);
 	void UpdateQuitTimer();
 	void StopQuitCountdown();
 

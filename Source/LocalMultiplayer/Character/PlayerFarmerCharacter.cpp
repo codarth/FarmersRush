@@ -101,9 +101,9 @@ void APlayerFarmerCharacter::AddCamera()
 	AddInstanceComponent(Camera);
 }
 
-void APlayerFarmerCharacter::BeginQuitCountdown()
+void APlayerFarmerCharacter::BeginQuitCountdown(bool bToMainMenu)
 {
-	GameModeRef->BeginQuitCountdown();
+	GameModeRef->BeginQuitCountdown(bToMainMenu);
 }
 
 void APlayerFarmerCharacter::UpdateQuitTimer()

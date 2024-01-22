@@ -4,7 +4,7 @@
 #include "Countdown_Interface.h"
 
 
-void ICountdown_Interface::BeginQuitCountdown()
+void ICountdown_Interface::BeginQuitCountdown(bool bToMainMenu)
 {
 }
 
