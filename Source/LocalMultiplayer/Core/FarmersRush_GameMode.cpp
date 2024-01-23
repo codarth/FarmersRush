@@ -322,7 +322,7 @@ void AFarmersRush_GameMode::CleanupDummies()
 			if(Cast<APlayerInputDummy>(PC->GetPawn()))
 			{				
 				PC->UnPossess();
-				PC->Destroy();
+				//PC->Destroy();
 			}
 		}
 		// Delete All Dummies
@@ -382,7 +382,9 @@ void AFarmersRush_GameMode::LoadMainMenu()
 	UGameplayStatics::LoadStreamLevel(this, MainMenuLevelName, true, true, LatentInfo);
 
 	// Disable splitscreen
-	GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(true);
+	auto Viewport = GetWorld()->GetGameViewport();
+	Viewport->SetForceDisableSplitscreen(false);
+	Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = 1;		
 	
 	FadeCamera(true);
 
@@ -400,6 +402,8 @@ void AFarmersRush_GameMode::LoadMainMenu()
 		Character->Destroy();
 	}
 	CurrentCharacters.Empty();
+
+	bStartingGame = false;
 }
 
 void AFarmersRush_GameMode::UnloadMainMenu()

@@ -10,6 +10,8 @@ UCustomGameViewportClient::UCustomGameViewportClient()
 	SplitscreenInfo.SetNum(ECustomSplitscreenType::SplitTypeCount, false);
 
 	// Fill the custom config
+	// OnePlayer
+	SplitscreenInfo[ECustomSplitscreenType::OnePlayer].PlayerData.Add(FPerPlayerSplitscreenData(1.00f, 1.00f, 0.00f, 0.00f)); //1
 	// TwoPlayer
 	SplitscreenInfo[ECustomSplitscreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.50f, 1.00f, 0.00f, 0.00f)); //1
 	SplitscreenInfo[ECustomSplitscreenType::TwoPlayer].PlayerData.Add(FPerPlayerSplitscreenData(0.50f, 1.00f, 0.50f, 0.00f)); //2
@@ -32,6 +34,9 @@ void UCustomGameViewportClient::UpdateActiveSplitscreenType()
 	
 	switch (ActivePlayers)
 	{
+	case 1:
+		ActiveSplitscreenType = static_cast<ESplitScreenType::Type>(ECustomSplitscreenType::OnePlayer);
+		break;
 	case 2:
 		ActiveSplitscreenType = static_cast<ESplitScreenType::Type>(ECustomSplitscreenType::TwoPlayer);
 		break;

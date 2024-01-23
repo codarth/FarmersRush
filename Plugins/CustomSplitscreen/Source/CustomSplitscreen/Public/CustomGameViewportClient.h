@@ -15,9 +15,10 @@ namespace ECustomSplitscreenType
 		// 0 value required by UE
 		None,
 		// Custom splitscreen, next value after last built-in splitscreen type
-		TwoPlayer = ESplitScreenType::SplitTypeCount,
-		ThreePlayer = ESplitScreenType::SplitTypeCount + 1,
-		FourPlayer = ESplitScreenType::SplitTypeCount + 2,
+		OnePlayer = ESplitScreenType::SplitTypeCount,
+		TwoPlayer = ESplitScreenType::SplitTypeCount + 1,
+		ThreePlayer = ESplitScreenType::SplitTypeCount + 2,
+		FourPlayer = ESplitScreenType::SplitTypeCount + 3,
 		SplitTypeCount
 	};
 }
