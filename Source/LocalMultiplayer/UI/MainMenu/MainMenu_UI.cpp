@@ -16,17 +16,13 @@ void UMainMenu_UI::UpdateCountdown(bool bIsGameStart){
 	// Is the game started
 	if (bIsGameStart)
 	{
-		// Are we trying to go back to the main menu
-		if (bQuitToMainMenu) // Quiting to main menu
-		{
-			CountdownText->SetText(FText::FromString("Quitting to main menu in " + FString::FromInt(CurrentCountdownTime)));
-			CountdownText->SetColorAndOpacity(FLinearColor(1.0f, 0.5f, 0.0f, 0.8f));
-		}
-		else // Starting the game
-		{
-			CountdownText->SetText(FText::FromString("Begin in " + FString::FromInt(CurrentCountdownTime)));
-			CountdownText->SetColorAndOpacity(FLinearColor(1.0f, 0.04f, 0.0f, 0.8f));
-		}
+		CountdownText->SetText(FText::FromString("Begin in " + FString::FromInt(CurrentCountdownTime)));
+		CountdownText->SetColorAndOpacity(FLinearColor(1.0f, 0.04f, 0.0f, 0.8f));
+	}
+	else if (bQuitToMainMenu) // Quiting to main menu
+	{
+		CountdownText->SetText(FText::FromString("Exit to main menu in " + FString::FromInt(CurrentCountdownTime)));
+		CountdownText->SetColorAndOpacity(FLinearColor(1.0f, 0.5f, 0.0f, 0.8f));
 	}
 	else // Quiting the game
 	{

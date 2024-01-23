@@ -22,6 +22,7 @@ class LOCALMULTIPLAYER_API AFarmersRush_GameMode : public AGameModeBase
 	GENERATED_BODY()
 
 	AFarmersRush_GameMode();
+	void SetupForDummies();
 
 	UFUNCTION()
 	APlayerInputDummy* SpawnAndPossessDummy(const AActor* PlayerStart, const int32 Index);
@@ -78,6 +79,11 @@ private:
 	void LevelLoading();
 	void LoadLevel();
 	void UnloadLevel();
+	int32 CurrentLevelIndex;
+	
+	void LoadMainMenu();
+	void UnloadMainMenu();
+	void BackToMainMenu();
 
 	void AdjustCharacterLocation();
 
@@ -86,6 +92,8 @@ private:
 	FTimerHandle LoadLevelTimer;
 	FTimerHandle UnloadLevelTimer;
 	FTimerHandle DummyCleanupTimer;
+
+	bool bExitToMainMenu;
 
 public:
 

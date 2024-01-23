@@ -46,26 +46,7 @@ void AFarmersRush_GameMode::BeginPlay()
 	// Disable splitscreen
 	GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(true);
 
-	// Get all player starts
-	TArray<AActor*> PlayerStarts;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-
-	// For each player start create a player controller
-	for (auto* PlayerStart : PlayerStarts)
-	{
-		const int32 Index = FCString::Atoi(*Cast<APlayerStart>(PlayerStart)->PlayerStartTag.ToString());;
-
-		if (PlayerStart)
-		{
-			// Create a new player if not already created for this player start
-			if (!UGameplayStatics::GetPlayerController(this, Index))
-			{
-				UGameplayStatics::CreatePlayer(this, Index, true);
-			}
-
-			SpawnAndPossessDummy(PlayerStart, Index);
-		}
-	}
+	SetupForDummies();
 }
 
 void AFarmersRush_GameMode::Tick(float DeltaSeconds)
@@ -104,6 +85,34 @@ void AFarmersRush_GameMode::Tick(float DeltaSeconds)
 	}
 }
 
+void AFarmersRush_GameMode::SetupForDummies()
+{
+	// Get all player starts
+	TArray<AActor*> PlayerStarts;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+
+	// For each player start create a player controller
+	for (auto* PlayerStart : PlayerStarts)
+	{
+		const int32 Index = FCString::Atoi(*Cast<APlayerStart>(PlayerStart)->PlayerStartTag.ToString());;
+
+		if (PlayerStart)
+		{
+			// Create a new player if not already created for this player start
+			if (!UGameplayStatics::GetPlayerController(this, Index))
+			{
+				const auto PC = UGameplayStatics::CreatePlayer(this, Index, true);
+				if (!PC)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("PC at index %d is invalid!"), Index);
+				}
+			}
+
+			SpawnAndPossessDummy(PlayerStart, Index);
+		}
+	}
+}
+
 APlayerInputDummy* AFarmersRush_GameMode::SpawnAndPossessDummy(const AActor* PlayerStart, const int32 Index)
 {
 	// Spawn the dummy
@@ -113,17 +122,22 @@ APlayerInputDummy* AFarmersRush_GameMode::SpawnAndPossessDummy(const AActor* Pla
 	Dummy->bCanActivate = true;
 	
 	const auto PC = UGameplayStatics::GetPlayerController(this, Index);
-	PC->Possess(Dummy);
+	if(PC)
+	{
+		PC->Possess(Dummy);
 
-	Dummy->FinishSpawning(PlayerStart->GetTransform());
+		Dummy->FinishSpawning(PlayerStart->GetTransform());
 
-	CurrentDummies.AddUnique(Dummy);
+		CurrentDummies.AddUnique(Dummy);
 	
-	PC->SetViewTarget(CameraRef);
+		PC->SetViewTarget(CameraRef);
 
-	SetupPlayerInfoUI(Index, PC);
+		SetupPlayerInfoUI(Index, PC);
 	
-	return Dummy;
+		return Dummy;
+	}
+
+	return nullptr;
 }
 
 void AFarmersRush_GameMode::SpawnCharacterAtDummy(APlayerInputDummy* Dummy, const int32 PlayerIndex)
@@ -175,6 +189,7 @@ void AFarmersRush_GameMode::BeginQuitCountdown(bool bToMainMenu)
 {
 	if (MainMenuWidget && !GetWorldTimerManager().IsTimerActive(QuitCountdownTimerHandle))
 	{
+		bExitToMainMenu = bToMainMenu;
 		MainMenuWidget->SetQuitTo(bToMainMenu);
 		MainMenuWidget->ResetCountdown();
 		MainMenuWidget->UpdateCountdown(false);
@@ -188,8 +203,16 @@ void AFarmersRush_GameMode::UpdateQuitTimer()
 	MainMenuWidget->UpdateCountdown(false);
 	if (MainMenuWidget->CurrentCountdownTime < 0)
 	{
-		// Exit the game
-		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
+		if (bExitToMainMenu)
+		{
+			StopQuitCountdown();
+			BackToMainMenu();
+		}
+		else
+		{
+			// Exit the game
+			UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
+		}
 	}
 }
 
@@ -235,15 +258,18 @@ void AFarmersRush_GameMode::StartGame()
 
 	GetWorldTimerManager().SetTimer(StartCountdownTimerHandle, this, &AFarmersRush_GameMode::TransitionToGame, 2.0f, false);
 	
-	UE_LOG(LogTemp, Warning, TEXT("Game started!"));
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));
+	// UE_LOG(LogTemp, Warning, TEXT("Game started!"));
+	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));
 }
 
 void AFarmersRush_GameMode::TransitionToGame()
 {
-	// TODO: do not remove UI, just hide elements not needed in main game
-	MainMenuWidget->RemoveFromParent();
-	MainMenuWidget = nullptr;
+	MainMenuWidget->PlayerInfo_1->SetVisibility(ESlateVisibility::Hidden);
+	MainMenuWidget->PlayerInfo_2->SetVisibility(ESlateVisibility::Hidden);
+	MainMenuWidget->PlayerInfo_3->SetVisibility(ESlateVisibility::Hidden);
+	MainMenuWidget->PlayerInfo_4->SetVisibility(ESlateVisibility::Hidden);
+
+	MainMenuWidget->CountdownBorder->SetVisibility(ESlateVisibility::Hidden);
 
 	LevelLoading();
 }
@@ -313,12 +339,13 @@ void AFarmersRush_GameMode::LevelLoading()
 
 	GetWorldTimerManager().SetTimer(DummyCleanupTimer, this, &AFarmersRush_GameMode::CleanupDummies, 1.5f, false);
 	GetWorldTimerManager().SetTimer(LoadLevelTimer, this, &AFarmersRush_GameMode::LoadLevel, 2.5f, false);
-	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadLevel, 2.5f, false);
+	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadMainMenu, 2.5f, false);
 }
 
 void AFarmersRush_GameMode::LoadLevel()
 {
-	const auto LevelToLoad = MainLevelNames[CurrentCharacters.Num() - 1];
+	CurrentLevelIndex = CurrentCharacters.Num() - 1;
+	const auto LevelToLoad = MainLevelNames[CurrentLevelIndex];
 
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = this;
@@ -341,8 +368,53 @@ void AFarmersRush_GameMode::LoadLevel()
 
 void AFarmersRush_GameMode::UnloadLevel()
 {
+	const auto LevelToUnload = MainLevelNames[CurrentLevelIndex];;
+
+	FLatentActionInfo LatentInfo;
+	UGameplayStatics::UnloadStreamLevel(this, LevelToUnload, LatentInfo, true);
+}
+
+void AFarmersRush_GameMode::LoadMainMenu()
+{
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	LatentInfo.UUID = 1;
+	UGameplayStatics::LoadStreamLevel(this, MainMenuLevelName, true, true, LatentInfo);
+
+	// Disable splitscreen
+	GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(true);
+	
+	FadeCamera(true);
+
+	for (const auto Character : CurrentCharacters)
+	{
+		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
+		{
+			if(Cast<APlayerInputDummy>(PC->GetPawn()))
+			{				
+				PC->UnPossess();
+				PC->Destroy();
+			}
+		}
+
+		Character->Destroy();
+	}
+	CurrentCharacters.Empty();
+}
+
+void AFarmersRush_GameMode::UnloadMainMenu()
+{
 	const FLatentActionInfo LatentInfo;
 	UGameplayStatics::UnloadStreamLevel(this, MainMenuLevelName, LatentInfo, true);
+}
+
+void AFarmersRush_GameMode::BackToMainMenu()
+{
+	FadeCamera();
+
+	GetWorldTimerManager().SetTimer(DummyCleanupTimer, this, &AFarmersRush_GameMode::SetupForDummies, 2.8f, false);
+	GetWorldTimerManager().SetTimer(LoadLevelTimer, this, &AFarmersRush_GameMode::LoadMainMenu, 2.5f, false);
+	GetWorldTimerManager().SetTimer(UnloadLevelTimer, this, &AFarmersRush_GameMode::UnloadLevel, 2.5f, false);
 }
 
 void AFarmersRush_GameMode::AdjustCharacterLocation()
