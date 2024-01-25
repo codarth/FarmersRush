@@ -38,6 +38,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
 
@@ -70,4 +72,24 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
 	bool bIsPlayerReady = false;
+
+public:
+
+	/** Interaction */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	float InteractionCheckFrequency = 0.1f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	float InteractionCheckDistance = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	float InteractionCheckHalfHeight = 50.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	float InteractionCheckRadius = 50.f;
+
+private:
+	
+	FTimerHandle InteractionCheckTimerHandle;
+	
+	void CheckForInteractable();
+
+	/** End Interaction */
 };

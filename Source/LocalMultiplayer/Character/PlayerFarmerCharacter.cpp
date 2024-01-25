@@ -8,6 +8,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Core/FarmersRush_GameMode.h"
+#include "Components/CapsuleComponent.h"
+#include "LocalMultiplayer/Actors/Items/Interactable.h"
+#include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 
 
 // Sets default values
@@ -31,9 +34,20 @@ void APlayerFarmerCharacter::BeginPlay()
 		}
 	}
 
+	InteractionCheckHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	InteractionCheckRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
+	
+	GetWorldTimerManager().SetTimer(InteractionCheckTimerHandle, this, &APlayerFarmerCharacter::CheckForInteractable, InteractionCheckFrequency, true, 1.0f);
+	
 	GetMesh()->SetMaterial(1, PlayerDefaultColor);
 
 	GameModeRef = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
+}
+
+void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	GetWorldTimerManager().ClearTimer(InteractionCheckTimerHandle);
 }
 
 // Called every frame
@@ -115,6 +129,39 @@ void APlayerFarmerCharacter::StopQuitCountdown()
 {
 	GameModeRef->StopQuitCountdown();
 }
+
+/** Interaction */
+void APlayerFarmerCharacter::CheckForInteractable()
+{
+	FVector TraceStart = GetActorLocation();
+	FVector TraceEnd = TraceStart + GetActorForwardVector() * InteractionCheckDistance;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(InteractionCheckRadius, InteractionCheckHalfHeight);
+
+	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Visibility, CollisionShape, QueryParams);
+
+	// Debug line
+	DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity, FColor::Red, false, 1.0f, 0, 1.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
+		
+	if (bHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		if (const auto Interactable = Cast<AInteractable>(HitActor))
+		{
+			if (const auto Interface = Cast<IInteract_Interface>(Interactable))
+			{
+				Interface->Interact();
+			}
+		}
+	}
+}
+
+
 
 
 
