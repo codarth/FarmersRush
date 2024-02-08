@@ -12,6 +12,13 @@
 #include "LocalMultiplayer/Actors/Items/Interactable.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 
+// cvar for debugging character
+static TAutoConsoleVariable<int32> CVarDebugCharacter(
+	TEXT("LocalMultiplayer.DebugCharacter"),
+	0,
+	TEXT("Enable Debug for PlayerFarmerCharacter"),
+	ECVF_Cheat);
+
 
 // Sets default values
 APlayerFarmerCharacter::APlayerFarmerCharacter()
@@ -144,10 +151,13 @@ void APlayerFarmerCharacter::CheckForInteractable()
 
 	bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Visibility, CollisionShape, QueryParams);
 
-	// Debug line
-	DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity, FColor::Red, false, 1.0f, 0, 1.0f);
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
-		
+	if (CVarDebugCharacter.GetValueOnGameThread())
+	{
+		// Debug line
+		DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity, FColor::Red, false, 1.0f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
+	}
+
 	if (bHit)
 	{
 		AActor* HitActor = HitResult.GetActor();
