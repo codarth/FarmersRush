@@ -74,3 +74,5 @@ DerivedDataCache/*
 
 # Ignore files added by Finder on Mac
 .DS_Store
+
+enc_temp_folder
