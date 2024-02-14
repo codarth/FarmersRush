@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Core/FarmersRush_GameMode.h"
 #include "Components/CapsuleComponent.h"
-#include "LocalMultiplayer/Actors/Items/Interactable.h"
+#include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 
 // cvar for debugging character
@@ -43,9 +43,9 @@ void APlayerFarmerCharacter::BeginPlay()
 
 	InteractionCheckHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	InteractionCheckRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
-	
+
 	GetWorldTimerManager().SetTimer(InteractionCheckTimerHandle, this, &APlayerFarmerCharacter::CheckForInteractable, InteractionCheckFrequency, true, 1.0f);
-	
+
 	GetMesh()->SetMaterial(1, PlayerDefaultColor);
 
 	GameModeRef = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
@@ -86,7 +86,7 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 
 		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
@@ -111,8 +111,8 @@ void APlayerFarmerCharacter::AddCamera()
 {
 	const auto SpringArm = NewObject<USpringArmComponent>(this, USpringArmComponent::StaticClass(), FName("Boom"));
 	SpringArm->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	SpringArm->TargetArmLength = 500.f;
-	SpringArm->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
+	SpringArm->TargetArmLength = 1000.f;
+	SpringArm->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f));
 	SpringArm->RegisterComponent();
 	AddInstanceComponent(SpringArm);
 
@@ -161,7 +161,7 @@ void APlayerFarmerCharacter::CheckForInteractable()
 	if (bHit)
 	{
 		AActor* HitActor = HitResult.GetActor();
-		if (const auto Interactable = Cast<AInteractable>(HitActor))
+		if (const auto Interactable = Cast<ABaseInteractable>(HitActor))
 		{
 			if (const auto Interface = Cast<IInteract_Interface>(Interactable))
 			{
