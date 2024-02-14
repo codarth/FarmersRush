@@ -1,13 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Interactable.h"
+#include "BaseInteractable.h"
 
 #include "Components/BoxComponent.h"
 
 
 // Sets default values
-AInteractable::AInteractable()
+ABaseInteractable::ABaseInteractable()
 {
 	// Default Root Component
 	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
@@ -24,21 +24,21 @@ AInteractable::AInteractable()
 }
 
 // Called when the game starts or when spawned
-void AInteractable::BeginPlay()
+void ABaseInteractable::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AInteractable::Tick(float DeltaTime)
+void ABaseInteractable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AInteractable::Interact()
+void ABaseInteractable::Interact()
 {
 	// print to screen when interacted with
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
 }
 
