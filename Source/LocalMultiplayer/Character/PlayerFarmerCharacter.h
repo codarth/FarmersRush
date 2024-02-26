@@ -9,26 +9,12 @@
 
 class AFarmersRush_GameMode;
 class UPlayerInfo_UI;
-struct FInputActionValue;
-class UInputAction;
-class UInputMappingContext;
 
 UCLASS()
 class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public ICountdown_Interface
 {
 	GENERATED_BODY()
 
-	// Mapping context
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* MappingContext;
-
-	// Move Forward Input Action
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	// Deactivate Player Input Action
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputAction* DeactivatePlayerAction;
 
 public:
 	// Sets default values for this character's properties
@@ -39,12 +25,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
-	// Called for Move Forward input
-	void Move(const FInputActionValue& Value);
-
-	// Called for Deactivate Player input
-	void DeactivatePlayer(const FInputActionValue& Value);
 
 	UPROPERTY()
 	AFarmersRush_GameMode* GameModeRef = nullptr;
@@ -52,9 +32,6 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
 	void AddCamera();
@@ -86,9 +63,9 @@ public:
 	float InteractionCheckRadius = 50.f;
 
 private:
-	
+
 	FTimerHandle InteractionCheckTimerHandle;
-	
+
 	void CheckForInteractable();
 
 	/** End Interaction */

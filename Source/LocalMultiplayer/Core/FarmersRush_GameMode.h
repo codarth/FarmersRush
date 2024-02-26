@@ -14,7 +14,7 @@ class APlayerInputDummy;
 class AMainMenuCamera;
 
 /**
- * 
+ *
  */
 UCLASS()
 class LOCALMULTIPLAYER_API AFarmersRush_GameMode : public AGameModeBase
@@ -22,6 +22,7 @@ class LOCALMULTIPLAYER_API AFarmersRush_GameMode : public AGameModeBase
 	GENERATED_BODY()
 
 	AFarmersRush_GameMode();
+
 	void SetupForDummies();
 
 	UFUNCTION()
@@ -29,8 +30,10 @@ class LOCALMULTIPLAYER_API AFarmersRush_GameMode : public AGameModeBase
 
 	virtual void BeginPlay() override;
 
+	//virtual void SwapPlayerControllers(APlayerController* OldPC, APlayerController* NewPC) override;
+
 public:
-	
+
 	virtual void Tick(float DeltaSeconds) override;
 	void SetupPlayerInfoUI(int32 Index, const APlayerController* PC);
 
@@ -49,6 +52,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Character Info")
 	TArray<APlayerInputDummy*> CurrentDummies;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Info")
+	TSubclassOf<APlayerController> MainMenuPlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character Info")
+	TSubclassOf<APlayerController> FarmerPlayerController;
+
 	UFUNCTION()
 	void SpawnCharacterAtDummy(APlayerInputDummy* Dummy, const int32 PlayerIndex);
 
@@ -66,7 +75,7 @@ public:
 	void StopStartCountdown();
 
 private:
-	
+
 	void StartGame();
 
 	void TransitionToGame();
@@ -80,7 +89,7 @@ private:
 	void LoadLevel();
 	void UnloadLevel();
 	int32 CurrentLevelIndex;
-	
+
 	void LoadMainMenu();
 	void UnloadMainMenu();
 	void BackToMainMenu();
@@ -101,7 +110,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Countdown")
 	TSubclassOf<UMainMenu_UI> MainMenuWidgetClass;
-	
+
 	UPROPERTY()
 	UMainMenu_UI* MainMenuWidget = nullptr;
 
@@ -110,7 +119,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelInfo")
 	FName MainMenuLevelName;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelInfo")
 	TArray<FName> MainLevelNames;
 

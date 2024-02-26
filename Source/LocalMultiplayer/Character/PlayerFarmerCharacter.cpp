@@ -2,12 +2,10 @@
 
 
 #include "PlayerFarmerCharacter.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "../Core/FarmersRush_GameMode.h"
+#include "LocalMultiplayer/Core/FarmersRush_GameMode.h"
 #include "Components/CapsuleComponent.h"
 #include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
@@ -32,15 +30,6 @@ void APlayerFarmerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Add input mapping context
-	if (const APlayerController* PC = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(MappingContext, 0);
-		}
-	}
-
 	InteractionCheckHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	InteractionCheckRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
 
@@ -61,50 +50,6 @@ void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void APlayerFarmerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::Move);
-		Input->BindAction(DeactivatePlayerAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::DeactivatePlayer);
-	}
-}
-
-void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-}
-
-void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
-{
-	if (const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this)))
-	{
-		if (!GM->bStartingGame)
-		{
-			GM->DeactivatePlayer(PlayerIndex);
-		}
-	}
 }
 
 void APlayerFarmerCharacter::AddCamera()

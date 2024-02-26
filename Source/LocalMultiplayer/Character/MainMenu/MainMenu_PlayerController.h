@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Farmer_PlayerController.generated.h"
+#include "MainMenu_PlayerController.generated.h"
 
 struct FInputActionValue;
 class UInputAction;
@@ -14,9 +14,11 @@ class UInputMappingContext;
  *
  */
 UCLASS()
-class LOCALMULTIPLAYER_API AFarmer_PlayerController : public APlayerController
+class LOCALMULTIPLAYER_API AMainMenu_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,6 +38,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	// Deactivate Player Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DeactivatePlayerAction;
+
 public:
 
 	// Bind Functions to Inputs
@@ -45,4 +51,8 @@ protected:
 
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
+
+	// Called for Deactivate Player input
+	void DeactivatePlayer(const FInputActionValue& Value);
+
 };
