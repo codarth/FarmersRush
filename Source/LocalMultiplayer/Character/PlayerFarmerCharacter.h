@@ -26,6 +26,10 @@ class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public IC
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
 
+	// Camera Movement Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* CameraMovementAction;
+
 	// Deactivate Player Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* DeactivatePlayerAction;
@@ -38,10 +42,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Called when the game ends or when destroyed
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
+
+	// Called for Rotate Camera input
+	void CameraMovement(const FInputActionValue& Value);
 
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
@@ -59,11 +67,12 @@ public:
 	UFUNCTION()
 	void AddCamera();
 
-	/** End Countdown Interface */
+	/** Countdown Interface */
 	virtual void BeginQuitCountdown(bool bToMainMenu) override;
 	virtual void UpdateQuitTimer() override;
 	virtual void StopQuitCountdown() override;
 
+	/** Player Info */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
 
@@ -73,9 +82,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
 	bool bIsPlayerReady = false;
 
+	// Camera Movement
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CameraRotationSpeed = 1.f;
+
 public:
 
 	/** Interaction */
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionCheckFrequency = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -86,9 +100,9 @@ public:
 	float InteractionCheckRadius = 50.f;
 
 private:
-	
+
 	FTimerHandle InteractionCheckTimerHandle;
-	
+
 	void CheckForInteractable();
 
 	/** End Interaction */

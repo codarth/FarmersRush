@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Core/FarmersRush_GameMode.h"
@@ -41,13 +42,16 @@ void APlayerFarmerCharacter::BeginPlay()
 		}
 	}
 
+	// Interaction
 	InteractionCheckHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	InteractionCheckRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
 
 	GetWorldTimerManager().SetTimer(InteractionCheckTimerHandle, this, &APlayerFarmerCharacter::CheckForInteractable, InteractionCheckFrequency, true, 1.0f);
 
+	// Set the player color
 	GetMesh()->SetMaterial(1, PlayerDefaultColor);
 
+	// Set the game mode reference
 	GameModeRef = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
 }
 
@@ -69,6 +73,7 @@ void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::Move);
+		Input->BindAction(CameraMovementAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::CameraMovement);
 		Input->BindAction(DeactivatePlayerAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::DeactivatePlayer);
 	}
 }
@@ -78,32 +83,44 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (IsValid(Controller))
 	{
-		// find out which way is forward
+		// Forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
+		// Forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
+		// Right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
+		// Add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
 
+void APlayerFarmerCharacter::CameraMovement(const FInputActionValue& Value)
+{
+	if (GameModeRef->bStartingGame)
+	{
+		const FVector2D RotationVector = Value.Get<FVector2D>();
+
+		if (IsValid(Controller))
+		{
+			// TODO: This is not working as expected
+			AddControllerYawInput(RotationVector.X);
+			AddControllerPitchInput(RotationVector.Y);
+		}
+	}
+}
+
 void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 {
-	if (const auto GM = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this)))
+	if (!GameModeRef->bStartingGame)
 	{
-		if (!GM->bStartingGame)
-		{
-			GM->DeactivatePlayer(PlayerIndex);
-		}
+		GameModeRef->DeactivatePlayer(PlayerIndex);
 	}
 }
 
@@ -120,6 +137,10 @@ void APlayerFarmerCharacter::AddCamera()
 	Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
 	Camera->RegisterComponent();
 	AddInstanceComponent(Camera);
+
+	// TODO: These may be the cause of my isses
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void APlayerFarmerCharacter::BeginQuitCountdown(bool bToMainMenu)

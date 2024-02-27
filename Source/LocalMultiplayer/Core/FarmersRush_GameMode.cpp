@@ -30,7 +30,7 @@ void AFarmersRush_GameMode::BeginPlay()
 	{
 		MainMenuWidget->AddToViewport();
 	}
-	
+
 	// Get all GameCamera actors
 	TArray<AActor*> GameCameras;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMainMenuCamera::StaticClass(), GameCameras);
@@ -41,7 +41,7 @@ void AFarmersRush_GameMode::BeginPlay()
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No GameCamera found!"));
-	}	
+	}
 
 	// Disable splitscreen
 	GetWorld()->GetGameViewport()->SetForceDisableSplitscreen(true);
@@ -120,20 +120,20 @@ APlayerInputDummy* AFarmersRush_GameMode::SpawnAndPossessDummy(const AActor* Pla
 	Dummy->PlayerIndex = Index;
 	Dummy->PlayerDefaultColor = PlayerColors[Index];
 	Dummy->bCanActivate = true;
-	
+
 	const auto PC = UGameplayStatics::GetPlayerController(this, Index);
-	if(PC)
+	if (PC)
 	{
 		PC->Possess(Dummy);
 
 		Dummy->FinishSpawning(PlayerStart->GetTransform());
 
 		CurrentDummies.AddUnique(Dummy);
-	
+
 		PC->SetViewTarget(CameraRef);
 
 		SetupPlayerInfoUI(Index, PC);
-	
+
 		return Dummy;
 	}
 
@@ -148,9 +148,9 @@ void AFarmersRush_GameMode::SpawnCharacterAtDummy(APlayerInputDummy* Dummy, cons
 	Character->FinishSpawning(Dummy->GetTransform());
 
 	Dummy->bCanActivate = false;
-	
+
 	CurrentCharacters.AddUnique(Character);
-	
+
 	const auto PC = UGameplayStatics::GetPlayerController(this, PlayerIndex);
 	PC->Possess(Character);
 	PC->SetViewTarget(CameraRef);
@@ -168,7 +168,7 @@ void AFarmersRush_GameMode::DeactivatePlayer(const int32 PlayerIndex)
 		{
 			PC->Possess(Dummy);
 			Dummy->bCanActivate = true;
-			
+
 			for (const auto Character : CurrentCharacters)
 			{
 				if (Character->PlayerIndex == PlayerIndex)
@@ -257,7 +257,7 @@ void AFarmersRush_GameMode::StartGame()
 	MainMenuWidget->CountdownText->SetText(FText::FromString("Let the farming commence!")); // TODO: Random saying
 
 	GetWorldTimerManager().SetTimer(StartCountdownTimerHandle, this, &AFarmersRush_GameMode::TransitionToGame, 2.0f, false);
-	
+
 	// UE_LOG(LogTemp, Warning, TEXT("Game started!"));
 	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));
 }
@@ -298,7 +298,7 @@ void AFarmersRush_GameMode::SetupPlayerCamera()
 	for (const auto Character : CurrentCharacters)
 	{
 		Character->AddCamera();
-				
+
 		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
 		{
 			PC->SetViewTarget(Character);
@@ -319,8 +319,8 @@ void AFarmersRush_GameMode::CleanupDummies()
 		//Get controller and remove it
 		if (const auto PC = UGameplayStatics::GetPlayerController(this, Dummy->PlayerIndex))
 		{
-			if(Cast<APlayerInputDummy>(PC->GetPawn()))
-			{				
+			if (Cast<APlayerInputDummy>(PC->GetPawn()))
+			{
 				PC->UnPossess();
 				//PC->Destroy();
 			}
@@ -357,12 +357,12 @@ void AFarmersRush_GameMode::LoadLevel()
 		// Enable splitscreen
 		auto Viewport = GetWorld()->GetGameViewport();
 		Viewport->SetForceDisableSplitscreen(false);
-		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();		
+		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();
 	}
 
 	AdjustCharacterLocation();
 	SetupPlayerCamera();
-	
+
 	FadeCamera(true);
 }
 
@@ -384,16 +384,16 @@ void AFarmersRush_GameMode::LoadMainMenu()
 	// Disable splitscreen
 	auto Viewport = GetWorld()->GetGameViewport();
 	Viewport->SetForceDisableSplitscreen(false);
-	Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = 1;		
-	
+	Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = 1;
+
 	FadeCamera(true);
 
 	for (const auto Character : CurrentCharacters)
 	{
 		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
 		{
-			if(Cast<APlayerInputDummy>(PC->GetPawn()))
-			{				
+			if (Cast<APlayerInputDummy>(PC->GetPawn()))
+			{
 				PC->UnPossess();
 				PC->Destroy();
 			}
@@ -451,7 +451,7 @@ void AFarmersRush_GameMode::ActivatePlayerUI(const int32 Index, const APlayerCon
 			UI->Join_NameText->SetText(FText::FromString("Player " + FString::FromInt(Index + 1)));
 			UI->PlayerColor_Border->SetBrushFromMaterial(Player->PlayerDefaultColor);
 			UI->PlayerColor_Border->SetVisibility(ESlateVisibility::Visible);
-        	UI->Ready_Text->SetVisibility(ESlateVisibility::Visible);
+			UI->Ready_Text->SetVisibility(ESlateVisibility::Visible);
 		}
 		else
 		{
