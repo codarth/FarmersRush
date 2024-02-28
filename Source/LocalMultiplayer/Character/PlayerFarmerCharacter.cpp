@@ -74,6 +74,7 @@ void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	{
 		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::Move);
 		Input->BindAction(CameraMovementAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::CameraMovement);
+		Input->BindAction(ZoomCameraAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::ZoomCamera);
 		Input->BindAction(DeactivatePlayerAction, ETriggerEvent::Triggered, this, &APlayerFarmerCharacter::DeactivatePlayer);
 	}
 }
@@ -109,9 +110,22 @@ void APlayerFarmerCharacter::CameraMovement(const FInputActionValue& Value)
 
 		if (IsValid(Controller))
 		{
-			// TODO: This is not working as expected
-			AddControllerYawInput(RotationVector.X);
-			AddControllerPitchInput(RotationVector.Y);
+			AddControllerYawInput(RotationVector.X * CameraSensitivity);
+			AddControllerPitchInput(RotationVector.Y * CameraSensitivity);
+		}
+	}
+}
+
+void APlayerFarmerCharacter::ZoomCamera(const FInputActionValue& Value)
+{
+	if (GameModeRef->bStartingGame)
+	{
+		const float ZoomValue = Value.Get<float>();
+
+		if (IsValid(Controller) && IsValid(SpringArm))
+		{
+			float NewLength = SpringArm->TargetArmLength + ZoomValue * CameraZoomSensitivity;
+			SpringArm->TargetArmLength = FMath::Clamp(NewLength, MinCameraZoom, MaxCameraZoom);
 		}
 	}
 }
@@ -120,27 +134,29 @@ void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 {
 	if (!GameModeRef->bStartingGame)
 	{
+		// Remove camera and deactivate player
+		SpringArm = nullptr;
+		Camera = nullptr;
+
 		GameModeRef->DeactivatePlayer(PlayerIndex);
 	}
 }
 
 void APlayerFarmerCharacter::AddCamera()
 {
-	const auto SpringArm = NewObject<USpringArmComponent>(this, USpringArmComponent::StaticClass(), FName("Boom"));
+	SpringArm = NewObject<USpringArmComponent>(this, USpringArmComponent::StaticClass(), FName("Boom"));
 	SpringArm->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	SpringArm->TargetArmLength = 1000.f;
 	SpringArm->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f));
+	SpringArm->bUsePawnControlRotation = true;
 	SpringArm->RegisterComponent();
 	AddInstanceComponent(SpringArm);
 
-	const auto Camera = NewObject<UCameraComponent>(SpringArm, UCameraComponent::StaticClass(), FName("Camera"));
+	Camera = NewObject<UCameraComponent>(SpringArm, UCameraComponent::StaticClass(), FName("Camera"));
 	Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
 	Camera->RegisterComponent();
 	AddInstanceComponent(Camera);
 
-	// TODO: These may be the cause of my isses
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
 void APlayerFarmerCharacter::BeginQuitCountdown(bool bToMainMenu)

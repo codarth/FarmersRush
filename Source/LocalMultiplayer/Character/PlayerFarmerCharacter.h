@@ -12,6 +12,8 @@ class UPlayerInfo_UI;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
+class USpringArmComponent;
+class UCameraComponent;
 
 UCLASS()
 class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public ICountdown_Interface
@@ -29,6 +31,10 @@ class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public IC
 	// Camera Movement Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* CameraMovementAction;
+
+	// Zoom Camera Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* ZoomCameraAction;
 
 	// Deactivate Player Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
@@ -51,6 +57,9 @@ protected:
 	// Called for Rotate Camera input
 	void CameraMovement(const FInputActionValue& Value);
 
+	// Called for Zoom Camera input
+	void ZoomCamera(const FInputActionValue& Value);
+
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
 
@@ -63,6 +72,28 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/** Camera */
+	USpringArmComponent* SpringArm = nullptr;
+	UCameraComponent* Camera = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CameraSensitivity = 3.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float CameraZoomSensitivity = 120.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float MinCameraZoom = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float MaxCameraZoom = 1000.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float MinPitch = -30.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float MaxPitch = 80.f;
 
 	UFUNCTION()
 	void AddCamera();
@@ -81,10 +112,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
 	bool bIsPlayerReady = false;
-
-	// Camera Movement
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float CameraRotationSpeed = 1.f;
 
 public:
 
