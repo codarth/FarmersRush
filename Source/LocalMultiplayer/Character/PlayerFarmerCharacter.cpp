@@ -53,6 +53,12 @@ void APlayerFarmerCharacter::BeginPlay()
 
 	// Set the game mode reference
 	GameModeRef = Cast<AFarmersRush_GameMode>(UGameplayStatics::GetGameMode(this));
+
+	if (auto CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0))
+	{
+		CameraManager->ViewPitchMin = MinPitch;
+		CameraManager->ViewPitchMax = MaxPitch;
+	}
 }
 
 void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)

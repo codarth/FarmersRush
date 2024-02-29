@@ -87,13 +87,13 @@ public:
 	float MinCameraZoom = 300.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MaxCameraZoom = 1000.f;
+	float MaxCameraZoom = 1500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MinPitch = -30.f;
+	float MinPitch = -75.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float MaxPitch = 80.f;
+	float MaxPitch = -10.f;
 
 	UFUNCTION()
 	void AddCamera();
