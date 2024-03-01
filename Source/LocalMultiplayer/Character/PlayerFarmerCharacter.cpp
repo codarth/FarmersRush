@@ -12,6 +12,7 @@
 #include "Components/CapsuleComponent.h"
 #include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
+#include <LocalMultiplayer/Core/Dev/DevGameMode.h>
 
 // cvar for debugging character
 static TAutoConsoleVariable<int32> CVarDebugCharacter(
@@ -110,7 +111,7 @@ void APlayerFarmerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerFarmerCharacter::CameraMovement(const FInputActionValue& Value)
 {
-	if (GameModeRef->bStartingGame)
+	if (Cast<ADevGameMode>(UGameplayStatics::GetGameMode(this)) || GameModeRef->bStartingGame)
 	{
 		const FVector2D RotationVector = Value.Get<FVector2D>();
 
@@ -124,7 +125,7 @@ void APlayerFarmerCharacter::CameraMovement(const FInputActionValue& Value)
 
 void APlayerFarmerCharacter::ZoomCamera(const FInputActionValue& Value)
 {
-	if (GameModeRef->bStartingGame)
+	if (Cast<ADevGameMode>(UGameplayStatics::GetGameMode(this)) || GameModeRef->bStartingGame)
 	{
 		const float ZoomValue = Value.Get<float>();
 

@@ -26,4 +26,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintreadWrite, Category = "Character")
 	TSubclassOf<APlayerFarmerCharacter> CharacterToSpawn;
 
+	bool bStartingGame = true;
+
 };
