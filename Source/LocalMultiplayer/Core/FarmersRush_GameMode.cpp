@@ -155,6 +155,13 @@ void AFarmersRush_GameMode::SpawnCharacterAtDummy(APlayerInputDummy* Dummy, cons
 	PC->Possess(Character);
 	PC->SetViewTarget(CameraRef);
 
+	// Get direction to origin
+	const auto Origin = FVector(0.0f, 0.0f, 0.0f);
+	const auto Direction = Origin - Character->GetActorLocation();
+	const auto NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	Character->SetActorRotation(NewRotation);
+
+
 	SetupPlayerInfoUI(PlayerIndex, PC);
 }
 
