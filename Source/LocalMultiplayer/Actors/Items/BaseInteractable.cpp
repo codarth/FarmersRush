@@ -12,7 +12,7 @@ ABaseInteractable::ABaseInteractable()
 	// Default Root Component
 	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
-	
+
 	// set up the box component
 	OverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapBox"));
 	OverlapBox->SetBoxExtent(FVector(50.f, 50.f, 50.f));
@@ -20,14 +20,14 @@ ABaseInteractable::ABaseInteractable()
 
 	// set up the mesh component
 	Interactable_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interactable_Mesh"));
-	Interactable_Mesh->SetupAttachment(OverlapBox);
+	Interactable_Mesh->SetupAttachment(SceneComponent);
 }
 
 // Called when the game starts or when spawned
 void ABaseInteractable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
