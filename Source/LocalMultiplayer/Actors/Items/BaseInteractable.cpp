@@ -39,6 +39,6 @@ void ABaseInteractable::Tick(float DeltaTime)
 void ABaseInteractable::Interact()
 {
 	// print to screen when interacted with
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
 }
 
