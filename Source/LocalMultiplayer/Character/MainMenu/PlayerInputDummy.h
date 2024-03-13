@@ -6,7 +6,6 @@
 #include "GameFramework/Pawn.h"
 #include "PlayerInputDummy.generated.h"
 
-class UPlayerInfo_UI;
 class APlayerFarmerCharacter;
 struct FInputActionValue;
 
@@ -24,13 +23,13 @@ class LOCALMULTIPLAYER_API APlayerInputDummy : public APawn
 	class UInputAction* ActivatePlayerAction;
 
 protected:
-	
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Called for Activate Player input
 	void ActivatePlayer(const FInputActionValue& Value);
-	
+
 public:
 
 	// Called to bind functionality to input

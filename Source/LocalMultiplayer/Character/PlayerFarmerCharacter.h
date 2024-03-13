@@ -8,7 +8,6 @@
 #include "PlayerFarmerCharacter.generated.h"
 
 class AFarmersRush_GameMode;
-class UPlayerInfo_UI;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;

@@ -209,6 +209,7 @@ void APlayerFarmerCharacter::CheckForInteractable()
 		{
 			if (const auto Interface = Cast<IInteract_Interface>(Interactable))
 			{
+				Interactable->InteractingColor = PlayerDefaultColor;
 				Interface->Interact();
 			}
 		}

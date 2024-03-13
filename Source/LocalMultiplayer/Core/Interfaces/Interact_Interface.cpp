@@ -8,3 +8,11 @@
 void IInteract_Interface::Interact()
 {
 }
+
+void IInteract_Interface::ShowInteractionWidget()
+{
+}
+
+void IInteract_Interface::HideInteractionWidget()
+{
+}

@@ -8,6 +8,8 @@
 #include "BaseInteractable.generated.h"
 
 class UBoxComponent;
+class UInteractionWidget;
+class UWidgetComponent;
 
 UCLASS()
 class LOCALMULTIPLAYER_API ABaseInteractable : public AActor, public IInteract_Interface
@@ -26,11 +28,28 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
-	UBoxComponent* OverlapBox;
+	// Interaction Box
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
+	//UBoxComponent* OverlapBox;
 
+	// Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
 	UStaticMeshComponent* Interactable_Mesh;
 
+	// Material of player interacting
+	UMaterialInstance* InteractingColor;
+
+	// Interaction Widget 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
+	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
+
+	UPROPERTY()
+	UInteractionWidget* InteractionWidget;
+
 	virtual void Interact() override;
+
+	virtual void ShowInteractionWidget() override;
+
+	virtual void HideInteractionWidget() override;
+
 };

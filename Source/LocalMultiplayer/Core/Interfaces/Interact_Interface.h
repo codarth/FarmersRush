@@ -14,7 +14,7 @@ class UInteract_Interface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class LOCALMULTIPLAYER_API IInteract_Interface
 {
@@ -24,4 +24,8 @@ class LOCALMULTIPLAYER_API IInteract_Interface
 public:
 
 	virtual void Interact();
+
+	virtual void ShowInteractionWidget();
+
+	virtual void HideInteractionWidget();
 };
