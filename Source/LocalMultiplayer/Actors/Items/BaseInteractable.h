@@ -28,23 +28,26 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Interaction Box
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
-	//UBoxComponent* OverlapBox;
-
 	// Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
 	UStaticMeshComponent* Interactable_Mesh;
 
 	// Material of player interacting
+	UPROPERTY()
 	UMaterialInstance* InteractingColor;
 
 	// Interaction Widget 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
 	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
 
-	UPROPERTY()
-	UInteractionWidget* InteractionWidget;
+	UPROPERTY(VisibleAnywhere, Category = "Interactable")
+	UWidgetComponent* InteractionWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
+	FText InteractText;
+
+	UFUNCTION(BlueprintPure, Category = "Interactable")
+	FText GetInteractText() const { return InteractText; }
 
 	virtual void Interact() override;
 

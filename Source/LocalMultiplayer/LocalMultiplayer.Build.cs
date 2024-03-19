@@ -9,6 +9,6 @@ public class LocalMultiplayer : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {"CustomSplitscreen"});
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG" });
 	}
 }

@@ -2,12 +2,4 @@
 
 
 #include "InteractionWidget.h"
-#include "Components/Border.h"
-#include "Components/TextBlock.h"
-
-
-void UInteractionWidget::NativeConstruct()
-{
-
-}
 

@@ -17,15 +17,19 @@ class LOCALMULTIPLAYER_API UInteractionWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	virtual void NativeConstruct() override;
+	// virtual void NativeConstruct() override;
 
 public:
 
+	FORCEINLINE UBorder* GetInteractionBorder() const { return InteractionBorder; }
+	FORCEINLINE UTextBlock* GetInteractionText() const { return InteractionText; }
 
-	UPROPERTY(BlueprintReadWrite, Category = "Interaction", meta = (BindWidget))
+private:
+	
+	UPROPERTY(meta = (BindWidget))
 	UBorder* InteractionBorder;
 
-	UPROPERTY(BLueprintReadWrite, Category = "Interaction", meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* InteractionText;
 
 };
