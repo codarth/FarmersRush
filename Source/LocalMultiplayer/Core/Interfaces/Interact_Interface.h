@@ -6,6 +6,43 @@
 #include "UObject/Interface.h"
 #include "Interact_Interface.generated.h"
 
+UENUM()
+enum class EInteractableType : uint8
+{
+	Pickup UMETA(DisplayName = "Pickup"),
+	NonPlayerCharacter UMETA(DisplayName = "NonPlayerCharacter"),
+	Device UMETA(DisplayName = "Device"),
+	Toggle UMETA(DisplayName = "Toggle"),
+	Container UMETA(DisplayName = "Container")
+};
+
+USTRUCT()
+struct FInteractableData
+{
+	GENERATED_BODY()
+
+	FInteractableData() : InteractableType(EInteractableType::Pickup), Name(FText::GetEmpty()),
+	                      Action(FText::GetEmpty()), Quantity(1), InteractionDuration(0.0f)
+	{
+	};
+
+	EInteractableType InteractableType;
+
+	UPROPERTY(EditInstanceOnly)
+	FText Name;
+
+	UPROPERTY(EditInstanceOnly)
+	FText Action;
+
+	// Used only for pickups
+	UPROPERTY(EditInstanceOnly)
+	int8 Quantity;
+
+	// Duration of the interaction for things like a valve or a lever
+	UPROPERTY(EditInstanceOnly)
+	float InteractionDuration;
+};
+
 // This class does not need to be modified.
 UINTERFACE()
 class UInteract_Interface : public UInterface
@@ -22,10 +59,19 @@ class LOCALMULTIPLAYER_API IInteract_Interface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
-	virtual void Interact();
+	// virtual void Interact();
 
 	virtual void ShowInteractionWidget();
 
 	virtual void HideInteractionWidget();
+
+	// Item based interactions
+	virtual void BeginFocus();
+	virtual void EndFocus();
+	// Character based interactions
+	virtual void BeginInteract();
+	virtual void EndInteract();
+	virtual void Interact();
+
+	FInteractableData InteractableData;
 };

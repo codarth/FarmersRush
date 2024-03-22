@@ -19,7 +19,7 @@ ABaseInteractable::ABaseInteractable()
 
 	// Setup the mesh component
 	Interactable_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interactable_Mesh"));
-	Interactable_Mesh->SetupAttachment(SceneComponent);
+	Interactable_Mesh->SetupAttachment(SceneComponent); // Set to Root?
 
 	// Setup the widget component
 	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(FName("Interaction Widget"));
@@ -73,23 +73,6 @@ void ABaseInteractable::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseInteractable::Interact()
-{
-	// print to screen when interacted with
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
-
-	// If the interactable has a widget, display it
-	if (InteractionWidget)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Interaction Widget Found"));
-		InteractionWidget->SetVisibility(true);
-		// InteractionWidget->InteractionBorder->SetVisibility(ESlateVisibility::Visible);
-		// // InteractionWidget->InteractionBorder->SetBrushFromMaterial(InteractingColor);
-		// InteractionWidget->InteractionText->SetVisibility(ESlateVisibility::Visible);
-		// InteractionWidget->InteractionText->SetText(FText::FromString("Interact"));
-	}
-}
-
 void ABaseInteractable::ShowInteractionWidget()
 {
 }
@@ -97,3 +80,51 @@ void ABaseInteractable::ShowInteractionWidget()
 void ABaseInteractable::HideInteractionWidget()
 {
 }
+
+void ABaseInteractable::BeginFocus()
+{
+	if (Interactable_Mesh)
+	{
+		// Hightlight the mesh
+		Interactable_Mesh->SetRenderCustomDepth(true);
+	}
+}
+
+void ABaseInteractable::EndFocus()
+{
+	if (Interactable_Mesh)
+	{
+		// Remove the highlight from the mesh
+		Interactable_Mesh->SetRenderCustomDepth(false);
+	}
+}
+
+void ABaseInteractable::BeginInteract()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Begin Interact on %s"), *GetName());
+}
+
+void ABaseInteractable::EndInteract()
+{
+	UE_LOG(LogTemp, Warning, TEXT("End Interact on %s"), *GetName());
+}
+
+void ABaseInteractable::Interact()
+{
+	// // print to screen when interacted with
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
+	//
+	// // If the interactable has a widget, display it
+	// if (InteractionWidget)
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Interaction Widget Found"));
+	// 	InteractionWidget->SetVisibility(true);
+	// 	// InteractionWidget->InteractionBorder->SetVisibility(ESlateVisibility::Visible);
+	// 	// // InteractionWidget->InteractionBorder->SetBrushFromMaterial(InteractingColor);
+	// 	// InteractionWidget->InteractionText->SetVisibility(ESlateVisibility::Visible);
+	// 	// InteractionWidget->InteractionText->SetText(FText::FromString("Interact"));
+	// }
+
+	UE_LOG(LogTemp, Warning, TEXT("Interact on %s"), *GetName());
+}
+

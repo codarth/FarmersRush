@@ -76,3 +76,5 @@ DerivedDataCache/*
 .DS_Store
 
 enc_temp_folder
+
+LocalMultiplayer.sln.DotSettings.user

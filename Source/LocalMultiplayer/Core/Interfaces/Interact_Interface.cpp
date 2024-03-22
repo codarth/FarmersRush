@@ -16,3 +16,19 @@ void IInteract_Interface::ShowInteractionWidget()
 void IInteract_Interface::HideInteractionWidget()
 {
 }
+
+void IInteract_Interface::BeginFocus()
+{
+}
+
+void IInteract_Interface::EndFocus()
+{
+}
+
+void IInteract_Interface::BeginInteract()
+{
+}
+
+void IInteract_Interface::EndInteract()
+{
+}

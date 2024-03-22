@@ -7,12 +7,29 @@
 #include "LocalMultiplayer/Core/Interfaces/Countdown_Interface.h"
 #include "PlayerFarmerCharacter.generated.h"
 
+class IInteract_Interface;
 class AFarmersRush_GameMode;
 struct FInputActionValue;
 class UInputAction;
 class UInputMappingContext;
 class USpringArmComponent;
 class UCameraComponent;
+
+USTRUCT()
+struct FInteractionData
+{
+	GENERATED_BODY()
+
+	FInteractionData() : CurrentInteractable(nullptr), LastInteractionCheckTime(0.f)
+	{
+	};
+
+	UPROPERTY()
+	AActor* CurrentInteractable;
+
+	UPROPERTY()
+	float LastInteractionCheckTime;
+};
 
 UCLASS()
 class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public ICountdown_Interface
@@ -38,6 +55,10 @@ class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public IC
 	// Deactivate Player Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* DeactivatePlayerAction;
+
+	// Interaction Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractionAction;
 
 public:
 	// Sets default values for this character's properties
@@ -73,7 +94,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** Camera */
+	UPROPERTY()
 	USpringArmComponent* SpringArm = nullptr;
+	UPROPERTY()
 	UCameraComponent* Camera = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
@@ -113,23 +136,40 @@ public:
 	bool bIsPlayerReady = false;
 
 public:
-
 	/** Interaction */
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	float InteractionCheckFrequency = 0.1f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	float InteractionCheckDistance = 200.f;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	// float InteractionCheckFrequency = 0.1f;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	// float InteractionCheckDistance = 200.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionCheckHalfHeight = 50.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionCheckRadius = 50.f;
 
 private:
-
 	FTimerHandle InteractionCheckTimerHandle;
 
 	void CheckForInteractable();
 
+	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
+	TScriptInterface<IInteract_Interface> TargetInteractable;
+
+	float InteractionCheckFrequency;
+	float InteractionCheckDistance;
+	FTimerHandle TimerHandle_Interaction;
+	FInteractionData InteractionData;
+
+	void PerformInteractionCheck();
+	void FoundInteractable(AActor* NewInteractable);
+	void NoInteractableFound();
+	void BeginInteract();
+	void EndInteract();
+	void Interact();
+
+public:
+
+	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
+	
 	/** End Interaction */
 };

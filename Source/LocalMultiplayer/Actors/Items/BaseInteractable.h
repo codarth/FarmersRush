@@ -49,10 +49,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Interactable")
 	FText GetInteractText() const { return InteractText; }
 
-	virtual void Interact() override;
-
 	virtual void ShowInteractionWidget() override;
 
 	virtual void HideInteractionWidget() override;
-
+	virtual void BeginFocus() override;
+	virtual void EndFocus() override;
+	virtual void BeginInteract() override;
+	virtual void EndInteract() override;
+	virtual void Interact() override;
 };
