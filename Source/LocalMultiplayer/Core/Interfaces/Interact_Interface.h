@@ -25,7 +25,7 @@ struct FInteractableData
 	                      Action(FText::GetEmpty()), Quantity(1), InteractionDuration(0.0f)
 	{
 	};
-
+	
 	EInteractableType InteractableType;
 
 	UPROPERTY(EditInstanceOnly)
