@@ -9,7 +9,7 @@
 
 void UMainMenu_UI::NativeConstruct()
 {
-	CountdownBorder->SetVisibility(ESlateVisibility::Hidden);
+	CountdownBorder->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMainMenu_UI::UpdateCountdown(bool bIsGameStart){

@@ -3,8 +3,14 @@
 
 #include "ItemBase.h"
 
-UItemBase::UItemBase()
+UItemBase::UItemBase() : bIsCopy(false), bIsPickup(false)
 {
+}
+
+void UItemBase::ResetItemFlags()
+{
+	bIsCopy = false;
+	bIsPickup = false;
 }
 
 UItemBase* UItemBase::CreateItemCopy() const
@@ -13,11 +19,9 @@ UItemBase* UItemBase::CreateItemCopy() const
 
 	ItemCopy->ID = this->ID;
 	ItemCopy->Quantity = this->Quantity;
-	ItemCopy->ItemQuality = this->ItemQuality;
 	ItemCopy->ItemType = this->ItemType;
 	ItemCopy->TextData = this->TextData;
 	ItemCopy->NumericData = this->NumericData;
-	ItemCopy->ItemStatistics = this->ItemStatistics;
 	ItemCopy->AssetData = this->AssetData;
 
 	return ItemCopy;
@@ -29,16 +33,5 @@ void UItemBase::SetQuantity(int32 NewQuantity)
 	{
 		Quantity = FMath::Clamp(NewQuantity, 0, NumericData.bIsStackable ? NumericData.MaxStackSize : 1);
 
-		// if (OwningInventory)
-		// {
-			// if(Quantity <= 0){
-			// 	OwningInventory->RemoveItem(this);
-			// }
-		// }
 	}
-}
-
-void UItemBase::Use(APlayerFarmerCharacter* Character)
-{
-	
 }

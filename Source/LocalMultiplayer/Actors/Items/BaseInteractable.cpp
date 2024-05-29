@@ -2,37 +2,20 @@
 
 
 #include "BaseInteractable.h"
-
-#include "EditorMetadataOverrides.h"
-#include "Components/Border.h"
-#include "Components/TextBlock.h"
-#include "Components/WidgetComponent.h"
-#include "LocalMultiplayer/UI/InteractionWidget.h"
+#include "ItemBase.h"
+#include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
+#include "LocalMultiplayer/UI/Interaction/InteractionWidget.h"
 
 
 // Sets default values
 ABaseInteractable::ABaseInteractable()
 {
-	// Default Root Component
-	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	RootComponent = SceneComponent;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Setup the mesh component
 	Interactable_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interactable_Mesh"));
-	Interactable_Mesh->SetupAttachment(SceneComponent); // Set to Root?
-
-	// Setup the widget component
-	InteractionWidget = CreateDefaultSubobject<UWidgetComponent>(FName("Interaction Widget"));
-	if (InteractionWidget)
-	{
-		InteractionWidget->SetupAttachment(RootComponent);
-		InteractionWidget->SetRelativeLocation(FVector(0.f, 0.f, 100.f));
-		InteractionWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Interaction Widget Found"));
-	}
+	Interactable_Mesh->SetSimulatePhysics(true);
+	RootComponent = Interactable_Mesh;
 }
 
 // Called when the game starts or when spawned
@@ -40,45 +23,58 @@ void ABaseInteractable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// InteractionWidget = CreateWidget<UInteractionWidget>(GetWorld(), InteractionWidgetClass);
-	if (InteractionWidget)
+	InitializeInteractable(UItemBase::StaticClass(), ItemQuantity);
+}
+
+void ABaseInteractable::InitializeInteractable(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
+{
+	if (!ItemRowHandle.IsNull())
 	{
-		// 	UE_LOG(LogTemp, Warning, TEXT("No Interaction Widget Found"));
-		// }
-		// else
-		// {
-		// 	InteractionWidget->AddToViewport();
-		// 	InteractionWidget->SetVisibility(ESlateVisibility::Hidden);
-		// }
-		// InteractionWidget->InitWidget();
-		// const auto Widget = Cast<UInteractionWidget>(InteractionWidget->GetUserWidgetObject());
-		// if (!Widget)
-		// {
-		// 	UE_LOG(LogTemp, Warning, TEXT("%s: Failed to Cast to UInteractionWidget"), *GetOwner()->GetName());
-		// 	return;
-		// }
-		// Widget->GetInteractionText()->TextDelegate.BindUFunction(this, "GetInteractText");
-		InteractionWidget->SetWidgetClass(InteractionWidgetClass);
-		InteractionWidget->SetVisibility(false);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Interaction Widget Not Found"));
+		const FItemData* ItemData = ItemRowHandle.GetRow<FItemData>(ItemRowHandle.RowName.ToString());
+
+		ItemReference = NewObject<UItemBase>(this, BaseClass);
+
+		ItemReference->ItemType = ItemData->ItemType;
+		ItemReference->NumericData = ItemData->NumericData;
+		ItemReference->TextData = ItemData->TextData;
+		ItemReference->AssetData = ItemData->AssetData;
+
+		ItemReference->NumericData.bIsStackable = ItemData->NumericData.MaxStackSize > 1;
+		InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
+
+		Interactable_Mesh->SetStaticMesh(ItemData->AssetData.Mesh);
+
+		UpdateInteractableData();
 	}
 }
 
-// Called every frame
-void ABaseInteractable::Tick(float DeltaTime)
+void ABaseInteractable::Interact(APlayerFarmerCharacter* PlayerCharacter)
 {
-	Super::Tick(DeltaTime);
+	if (PlayerCharacter)
+	{
+		TakeInteractable(PlayerCharacter);
+	}
 }
 
-void ABaseInteractable::ShowInteractionWidget()
+void ABaseInteractable::UpdateInteractableData()
 {
+	InstanceInteractableData.InteractableType = EInteractableType::Pickup;
+	InstanceInteractableData.Name = ItemReference->TextData.ItemName;
+	InstanceInteractableData.Action = ItemReference->TextData.InteractionText;
+	InstanceInteractableData.Quantity = ItemReference->Quantity;
+	InteractableData = InstanceInteractableData;
 }
 
-void ABaseInteractable::HideInteractionWidget()
+void ABaseInteractable::TakeInteractable(const APlayerFarmerCharacter* Taker)
 {
+	if (!IsPendingKillPending())
+	{
+		if (ItemReference)
+		{
+			// Taker->HandleAddItem(ItemReference);
+			Destroy();
+		}
+	}
 }
 
 void ABaseInteractable::BeginFocus()
@@ -88,6 +84,8 @@ void ABaseInteractable::BeginFocus()
 		// Hightlight the mesh
 		Interactable_Mesh->SetRenderCustomDepth(true);
 	}
+
+	InteractionWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ABaseInteractable::EndFocus()
@@ -97,34 +95,21 @@ void ABaseInteractable::EndFocus()
 		// Remove the highlight from the mesh
 		Interactable_Mesh->SetRenderCustomDepth(false);
 	}
+
+	InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
-void ABaseInteractable::BeginInteract()
+void ABaseInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Begin Interact on %s"), *GetName());
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	const FName ChangePropertyName = PropertyChangedEvent.Property
+		                                 ? PropertyChangedEvent.Property->GetFName()
+		                                 : NAME_None;
+
+	if (ChangePropertyName == GET_MEMBER_NAME_CHECKED(FDataTableRowHandle, RowName))
+	{
+		const FItemData* ItemData = ItemRowHandle.GetRow<FItemData>(ItemRowHandle.RowName.ToString());
+		Interactable_Mesh->SetStaticMesh(ItemData->AssetData.Mesh);
+	}
 }
-
-void ABaseInteractable::EndInteract()
-{
-	UE_LOG(LogTemp, Warning, TEXT("End Interact on %s"), *GetName());
-}
-
-void ABaseInteractable::Interact()
-{
-	// // print to screen when interacted with
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *FString::Printf(TEXT("Interacted with %s"), *GetName()));
-	//
-	// // If the interactable has a widget, display it
-	// if (InteractionWidget)
-	// {
-	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Interaction Widget Found"));
-	// 	InteractionWidget->SetVisibility(true);
-	// 	// InteractionWidget->InteractionBorder->SetVisibility(ESlateVisibility::Visible);
-	// 	// // InteractionWidget->InteractionBorder->SetBrushFromMaterial(InteractingColor);
-	// 	// InteractionWidget->InteractionText->SetVisibility(ESlateVisibility::Visible);
-	// 	// InteractionWidget->InteractionText->SetText(FText::FromString("Interact"));
-	// }
-
-	UE_LOG(LogTemp, Warning, TEXT("Interact on %s"), *GetName());
-}
-

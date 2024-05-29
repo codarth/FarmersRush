@@ -7,6 +7,8 @@
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 #include "BaseInteractable.generated.h"
 
+class APlayerFarmerCharacter;
+class UItemBase;
 class UBoxComponent;
 class UInteractionWidget;
 class UWidgetComponent;
@@ -20,41 +22,53 @@ public:
 	// Sets default values for this actor's properties
 	ABaseInteractable();
 
+	virtual void BeginFocus() override;
+	virtual void EndFocus() override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
 	UStaticMeshComponent* Interactable_Mesh;
 
-	// Material of player interacting
-	UPROPERTY()
-	UMaterialInstance* InteractingColor;
-
-	// Interaction Widget 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
-	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
-
+	// Data for interaction
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")
-	UWidgetComponent* InteractionWidget;
+	FInteractableData InstanceInteractableData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
-	FText InteractText;
+	// Interaction widget
+	UPROPERTY(EditInstanceOnly, Category = "Interactable")
+	UInteractionWidget* InteractionWidget;
 
-	UFUNCTION(BlueprintPure, Category = "Interactable")
-	FText GetInteractText() const { return InteractText; }
+	// Item reference
+	UPROPERTY(VisibleAnywhere, Category = "Interactable")
+	UItemBase* ItemReference;
 
-	virtual void ShowInteractionWidget() override;
+	// Item quantity
+	UPROPERTY(EditInstanceOnly, Category = "Interactable")
+	int32 ItemQuantity;
 
-	virtual void HideInteractionWidget() override;
-	virtual void BeginFocus() override;
-	virtual void EndFocus() override;
-	virtual void BeginInteract() override;
-	virtual void EndInteract() override;
-	virtual void Interact() override;
+	// Item row handle
+	UPROPERTY(EditInstanceOnly, Category = "Interactable")
+	FDataTableRowHandle ItemRowHandle;
+
+	// Initialize the interactable
+	void InitializeInteractable(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity);
+
+	FORCEINLINE UItemBase* GetItemData() const { return ItemReference; }
+
+	// Implement Interaction
+	virtual void Interact(APlayerFarmerCharacter* PlayerCharacter) override;
+
+	// Update the interactable data
+	void UpdateInteractableData();
+
+	// Perform the interaction
+	void TakeInteractable(const APlayerFarmerCharacter* Taker);
+
+#if WITH_EDITOR
+	// When changes are made in the editor
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 };

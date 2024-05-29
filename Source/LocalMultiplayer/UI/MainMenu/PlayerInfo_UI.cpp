@@ -11,7 +11,7 @@
 void UPlayerInfo_UI::NativeConstruct()
 {
 	Join_NameText->SetText(FText::FromString("Press Start To Join"));
-	PlayerColor_Border->SetVisibility(ESlateVisibility::Hidden);
-	Ready_Icon->SetVisibility(ESlateVisibility::Hidden);
-	Ready_Text->SetVisibility(ESlateVisibility::Hidden);
+	PlayerColor_Border->SetVisibility(ESlateVisibility::Collapsed);
+	Ready_Icon->SetVisibility(ESlateVisibility::Collapsed);
+	Ready_Text->SetVisibility(ESlateVisibility::Collapsed);
 }

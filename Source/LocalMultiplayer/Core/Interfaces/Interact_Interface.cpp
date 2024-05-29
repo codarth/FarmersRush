@@ -5,7 +5,7 @@
 
 
 // Add default functionality here for any IInteractInterface functions that are not pure virtual.
-void IInteract_Interface::Interact()
+void IInteract_Interface::Interact(APlayerFarmerCharacter* PlayerCharacter)
 {
 }
 

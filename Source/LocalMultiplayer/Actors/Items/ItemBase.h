@@ -17,60 +17,54 @@ class LOCALMULTIPLAYER_API UItemBase : public UObject
 
 public:
 
-	//■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-	// Properties & Variables
-	//■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+	UItemBase();
 
-	// UPROPERTY()
-	// UInventoryComponent* OwningInventory;
+	// Unique ID for this item
+	UPROPERTY(VisibleAnywhere, Category = "Item Data")
+	FName ID;
 
+	// Quantity of this item in the stack
 	UPROPERTY(VisibleAnywhere, Category = "Item Data", meta = (UIMin = 1, UIMax = 100))
 	int32 Quantity;
 
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FName ID;
-	
+	// Type Information for this item (Tool, Crop, Throwable, etc.)
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	EItemType ItemType;
-	
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	EItemQuality ItemQuality;
-	
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemStatistics ItemStatistics;
-	
+
+	// Text information for this item (Name, Description, etc.)
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemTextData TextData;
-	
+
+	// Numeric information for this item (MaxStackSize, Stackable, SellValue, etc.)
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemNumericData NumericData;
-	
+
+	// Asset information for this item (Icon, Mesh, etc.)
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemAssetData AssetData;	
 
-	//■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-	// Functions
-	//■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+	// Flags for this item
+	// Is this item a copy of another item?
+	bool bIsCopy;
+	// Is this item a pickup?
+	bool bIsPickup;
 
-	UItemBase();
-
+	// Reset the flags for this item
+	void ResetItemFlags();
+	
+	// Create a copy of this item
 	UFUNCTION(Category = "Item")
 	UItemBase* CreateItemCopy() const;
 
-	UFUNCTION(Category = "Item")
-	FORCEINLINE float GetItemStackWeight() const { return Quantity* NumericData.Weight; }
-	UFUNCTION(Category = "Item")
-	FORCEINLINE float GetItemSingleWeight() const { return NumericData.Weight; }
-	UFUNCTION(Category = "Item")
+	// Get whether the current quantity is at the max stack size
 	FORCEINLINE bool IsFullItemStack() const { return Quantity == NumericData.MaxStackSize; }
 
+	// Get the quantity of this item
 	UFUNCTION(Category = "Item")
 	void SetQuantity(int32 NewQuantity);
 
-	UFUNCTION(Category = "Item")
-	virtual void Use(APlayerFarmerCharacter* Character);
-	
 protected:
 
+	// Overloaded comparison operator for this item
 	bool operator==(const FName& OtherID) const { return ID == OtherID; } 
 };

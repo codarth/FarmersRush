@@ -51,9 +51,6 @@ void APlayerFarmerCharacter::BeginPlay()
 	InteractionCheckHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	InteractionCheckRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
 
-	GetWorldTimerManager().SetTimer(InteractionCheckTimerHandle, this, &APlayerFarmerCharacter::CheckForInteractable,
-	                                InteractionCheckFrequency, true, 1.0f);
-
 	// Set the player color
 	GetMesh()->SetMaterial(1, PlayerDefaultColor);
 
@@ -96,8 +93,8 @@ void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		Input->BindAction(DeactivatePlayerAction, ETriggerEvent::Triggered, this,
 		                  &APlayerFarmerCharacter::DeactivatePlayer);
 
-		Input->BindAction(InteractionAction, ETriggerEvent::Started, this, &APlayerFarmerCharacter::BeginInteract);
-		Input->BindAction(InteractionAction, ETriggerEvent::Completed, this, &APlayerFarmerCharacter::EndInteract);
+		Input->BindAction(InteractAction, ETriggerEvent::Started, this, &APlayerFarmerCharacter::BeginInteract);
+		Input->BindAction(InteractAction, ETriggerEvent::Completed, this, &APlayerFarmerCharacter::EndInteract);
 	}
 }
 
@@ -196,42 +193,6 @@ void APlayerFarmerCharacter::StopQuitCountdown()
 }
 
 /** Interaction */
-void APlayerFarmerCharacter::CheckForInteractable()
-{
-	// FVector TraceStart = GetActorLocation();
-	// FVector TraceEnd = TraceStart + GetActorForwardVector() * InteractionCheckDistance;
-	//
-	// FHitResult HitResult;
-	// FCollisionQueryParams QueryParams;
-	// QueryParams.AddIgnoredActor(this);
-	//
-	// FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(InteractionCheckRadius, InteractionCheckHalfHeight);
-	//
-	// bool bHit = GetWorld()->SweepSingleByChannel(HitResult, TraceStart, TraceEnd, FQuat::Identity, ECC_Visibility,
-	//                                              CollisionShape, QueryParams);
-	//
-	// if (CVarDebugCharacter.GetValueOnGameThread())
-	// {
-	// 	// Debug line
-	// 	DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity,
-	// 	                 FColor::Red, false, 1.0f, 0, 1.0f);
-	// 	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
-	// }
-	//
-	// if (bHit)
-	// {
-	// 	AActor* HitActor = HitResult.GetActor();
-	// 	if (const auto Interactable = Cast<ABaseInteractable>(HitActor))
-	// 	{
-	// 		if (const auto Interface = Cast<IInteract_Interface>(Interactable))
-	// 		{
-	// 			Interactable->InteractingColor = PlayerDefaultColor;
-	// 			Interface->Interact();
-	// 		}
-	// 	}
-	// }
-}
-
 void APlayerFarmerCharacter::PerformInteractionCheck()
 {
 	InteractionData.LastInteractionCheckTime = GetWorld()->GetTimeSeconds();
@@ -243,8 +204,13 @@ void APlayerFarmerCharacter::PerformInteractionCheck()
 	float LookDirection = FVector::DotProduct(GetActorForwardVector(), GetViewRotation().Vector());
 	if (LookDirection > 0) // Changing 0 to some thing greater will reduce the angle of interaction
 	{
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.f, 0, 2.0f);
-
+		if (CVarDebugCharacter.GetValueOnGameThread())
+		{
+			// Debug line
+			//DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity, FColor::Red, false, 1.0f, 0, 1.0f);
+			DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
+		}
+		
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
@@ -311,7 +277,7 @@ void APlayerFarmerCharacter::NoInteractableFound()
 			TargetInteractable->EndFocus();
 		}
 
-		// Hide the interaction widget on the HUD
+		// Hide the interaction widget on the Item
 
 		// Clear the current interactable
 		InteractionData.CurrentInteractable = nullptr;
@@ -364,7 +330,7 @@ void APlayerFarmerCharacter::Interact()
 	// Interact with the interactable
 	if (IsValid(TargetInteractable.GetObject()))
 	{
-		TargetInteractable->Interact();
+		TargetInteractable->Interact(this);
 	}
 
 }

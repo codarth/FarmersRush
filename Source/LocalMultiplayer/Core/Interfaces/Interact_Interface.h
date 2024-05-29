@@ -6,13 +6,15 @@
 #include "UObject/Interface.h"
 #include "Interact_Interface.generated.h"
 
+class APlayerFarmerCharacter;
+
 UENUM()
 enum class EInteractableType : uint8
 {
 	Pickup UMETA(DisplayName = "Pickup"),
 	NonPlayerCharacter UMETA(DisplayName = "NonPlayerCharacter"),
-	Device UMETA(DisplayName = "Device"),
-	Toggle UMETA(DisplayName = "Toggle"),
+	FarmPlot UMETA(DisplayName = "FarmPlot"),
+	Tool UMETA(DisplayName = "Tool"),
 	Container UMETA(DisplayName = "Container")
 };
 
@@ -21,24 +23,26 @@ struct FInteractableData
 {
 	GENERATED_BODY()
 
-	FInteractableData() : InteractableType(EInteractableType::Pickup), Name(FText::GetEmpty()),
-	                      Action(FText::GetEmpty()), Quantity(1), InteractionDuration(0.0f)
+	FInteractableData() : InteractableType(EInteractableType::Pickup), Name(FText::GetEmpty()), Action(FText::GetEmpty()), Quantity(1), InteractionDuration(0.0f)
 	{
 	};
-	
+
+	// Type of interactable
 	EInteractableType InteractableType;
 
+	// A clear name of the interactable
 	UPROPERTY(EditInstanceOnly)
 	FText Name;
 
+	// The action that will be displayed to the player
 	UPROPERTY(EditInstanceOnly)
 	FText Action;
 
-	// Used only for pickups
+	// Quantity of the item. May not be relevant for all interactables
 	UPROPERTY(EditInstanceOnly)
 	int8 Quantity;
 
-	// Duration of the interaction for things like a valve or a lever
+	// Duration of the interaction if they need to hold a button or something
 	UPROPERTY(EditInstanceOnly)
 	float InteractionDuration;
 };
@@ -57,21 +61,28 @@ class LOCALMULTIPLAYER_API IInteract_Interface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	// virtual void Interact();
 
+	// Reveals the interaction widget
 	virtual void ShowInteractionWidget();
 
+	// Hides the interaction widget
 	virtual void HideInteractionWidget();
 
-	// Item based interactions
+	// Called when the player begins to focus on the interactable
 	virtual void BeginFocus();
+	// Called when the player stops focusing on the interactable
 	virtual void EndFocus();
+	
 	// Character based interactions
+	// Called when the player begins to interact with the interactable
 	virtual void BeginInteract();
+	// Called when the player stops interacting with the interactable
 	virtual void EndInteract();
-	virtual void Interact();
+	// The actual call for interaction
+	virtual void Interact(APlayerFarmerCharacter* PlayerCharacter);
 
+	// Data for the interactable
 	FInteractableData InteractableData;
 };

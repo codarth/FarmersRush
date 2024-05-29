@@ -36,17 +36,36 @@ class LOCALMULTIPLAYER_API APlayerFarmerCharacter : public ACharacter, public IC
 {
 	GENERATED_BODY()
 
-	// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-	//          VARIABLES
-	// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+public:
+	// Sets default values for this character's properties
+	APlayerFarmerCharacter();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Called when the game ends or when destroyed
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY()
+	AFarmersRush_GameMode* GameModeRef = nullptr;
 
 public:
-	
 	/** Camera */
 	UPROPERTY()
 	USpringArmComponent* SpringArm = nullptr;
 	UPROPERTY()
 	UCameraComponent* Camera = nullptr;
+
+	// Add camera to player when loading into the game
+	UFUNCTION()
+	void AddCamera();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraSensitivity = 3.f;
@@ -66,6 +85,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float MaxPitch = -10.f;
 
+
 	/** Player Info */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Info")
 	int32 PlayerIndex;
@@ -76,26 +96,51 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintreadWrite, Category = "Player Info")
 	bool bIsPlayerReady = false;
 
+
+	/** Countdown Interface */
+	virtual void BeginQuitCountdown(bool bToMainMenu) override;
+	virtual void UpdateQuitTimer() override;
+	virtual void StopQuitCountdown() override;
+
+
 	/** Interaction */
 
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	// float InteractionCheckFrequency = 0.1f;
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	// float InteractionCheckDistance = 200.f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionCheckHalfHeight = 50.f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionCheckRadius = 50.f;
 
-protected:
+	FTimerHandle InteractionCheckTimerHandle;
 
-	UPROPERTY()
-	AFarmersRush_GameMode* GameModeRef = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
+	TScriptInterface<IInteract_Interface> TargetInteractable;
+
+	float InteractionCheckFrequency;
+	float InteractionCheckDistance;
+	FTimerHandle TimerHandle_Interaction;
+	FInteractionData InteractionData;
+
+
+	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
 
 private:
-	
+
+	void PerformInteractionCheck();
+	void FoundInteractable(AActor* NewInteractable);
+	void NoInteractableFound();
+	void BeginInteract();
+	void EndInteract();
+	void Interact();
+
+	void UpdateInteractionWidget() const;
+
+	/** Input **/
 	// Mapping context
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* MappingContext;
@@ -118,51 +163,7 @@ private:
 
 	// Interaction Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
-	UInputAction* InteractionAction;
-
-	FTimerHandle InteractionCheckTimerHandle;
-
-	UPROPERTY(VisibleAnywhere, Category = "Character | Interaction")
-	TScriptInterface<IInteract_Interface> TargetInteractable;
-
-	float InteractionCheckFrequency;
-	float InteractionCheckDistance;
-	FTimerHandle TimerHandle_Interaction;
-	FInteractionData InteractionData;
-
-	// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-	//          FUNCTIONS
-	// ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-public:
-	
-	// Sets default values for this character's properties
-	APlayerFarmerCharacter();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	// Add camera to player when loading into the game
-	UFUNCTION()
-	void AddCamera();
-
-	/** Countdown Interface */
-	virtual void BeginQuitCountdown(bool bToMainMenu) override;
-	virtual void UpdateQuitTimer() override;
-	virtual void StopQuitCountdown() override;
-
-	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
-
-protected:
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Called when the game ends or when destroyed
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	UInputAction* InteractAction;
 
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
@@ -175,16 +176,4 @@ protected:
 
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
-
-private:
-	
-	void CheckForInteractable();
-
-	void PerformInteractionCheck();
-	void FoundInteractable(AActor* NewInteractable);
-	void NoInteractableFound();
-	void BeginInteract();
-	void EndInteract();
-	void Interact();
-
 };
