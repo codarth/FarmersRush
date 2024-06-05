@@ -14,6 +14,8 @@
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 #include <LocalMultiplayer/Core/Dev/DevGameMode.h>
 
+#include "LocalMultiplayer/UI/Player/PlayerHUD.h"
+
 // cvar for debugging character
 static TAutoConsoleVariable<int32> CVarDebugCharacter(
 	TEXT("LocalMultiplayer.DebugCharacter"),
@@ -62,6 +64,9 @@ void APlayerFarmerCharacter::BeginPlay()
 		CameraManager->ViewPitchMin = MinPitch;
 		CameraManager->ViewPitchMax = MaxPitch;
 	}
+
+	// TODO: Remove this, only for testing
+	PlayerMoney = PlayerIndex;
 }
 
 void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)

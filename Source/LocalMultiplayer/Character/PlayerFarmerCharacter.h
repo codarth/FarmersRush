@@ -7,6 +7,7 @@
 #include "LocalMultiplayer/Core/Interfaces/Countdown_Interface.h"
 #include "PlayerFarmerCharacter.generated.h"
 
+class APlayerHUD;
 class IInteract_Interface;
 class AFarmersRush_GameMode;
 struct FInputActionValue;
@@ -176,4 +177,13 @@ private:
 
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
+
+	/** Player Money */
+protected:
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Money")
+	int32 PlayerMoney = 0;
+public:
+	int32 GetPlayerMoney() const { return PlayerMoney; }
+	
 };
