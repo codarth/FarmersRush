@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerMoneyWidget.generated.h"
 
+class UHorizontalBox;
 class APlayerFarmerCharacter;
 class UTextBlock;
 
@@ -25,10 +26,18 @@ class LOCALMULTIPLAYER_API UPlayerMoneyWidget : public UUserWidget
 public:
 	
 	void SetOwner(APlayerFarmerCharacter* Player);
-	void UpdatePlayerMoney();
+	void UpdatePlayerMoney() const;
+
+	// show money widget
+	void ShowMoneyWidget() const;
+	// hide money widget
+	void HideMoneyWidget() const;
 
 protected:
 	TWeakObjectPtr<APlayerFarmerCharacter> PlayerCharacter;
+
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Player Game Status")
+	UHorizontalBox* MoneyBox;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Player Game Status")
 	UTextBlock* PlayerCurrentMoneyText;

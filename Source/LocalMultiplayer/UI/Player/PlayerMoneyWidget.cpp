@@ -2,6 +2,7 @@
 
 
 #include "PlayerMoneyWidget.h"
+#include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 
@@ -41,7 +42,17 @@ void UPlayerMoneyWidget::SetOwner(APlayerFarmerCharacter* Player)
 	PlayerCharacter = Player;
 }
 
-void UPlayerMoneyWidget::UpdatePlayerMoney()
+void UPlayerMoneyWidget::UpdatePlayerMoney() const
 {
 	PlayerCurrentMoneyText->SetText(FText::Format(FText::FromString("${0}"),PlayerCharacter->GetPlayerMoney()));
+}
+
+void UPlayerMoneyWidget::ShowMoneyWidget() const
+{
+	MoneyBox->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UPlayerMoneyWidget::HideMoneyWidget() const
+{
+	MoneyBox->SetVisibility(ESlateVisibility::Collapsed);
 }

@@ -367,6 +367,12 @@ void AFarmersRush_GameMode::LoadLevel()
 		Cast<UCustomGameViewportClient>(Viewport)->ActivePlayers = CurrentCharacters.Num();
 	}
 
+	for (const auto Character : CurrentCharacters)
+	{
+		Character->ShowMoneyBox();
+	}
+	
+
 	AdjustCharacterLocation();
 	SetupPlayerCamera();
 

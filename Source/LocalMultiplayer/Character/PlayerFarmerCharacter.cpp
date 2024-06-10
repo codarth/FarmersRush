@@ -74,7 +74,9 @@ void APlayerFarmerCharacter::BeginPlay()
 	PlayerMoney = FMath::RandRange(0, 1000);
 
 	// PlayerMoneyWidget = CreateWidget<UPlayerMoneyWidget>(GetWorld(), PlayerMoneyWidgetClass);
-	Cast<UPlayerMoneyWidget>(PlayerMoneyWidgetComponent->GetUserWidgetObject())->SetOwner(this);
+	const auto Widget = Cast<UPlayerMoneyWidget>(PlayerMoneyWidgetComponent->GetUserWidgetObject());
+	Widget->SetOwner(this);
+	Widget->HideMoneyWidget();
 }
 
 void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -346,4 +348,14 @@ void APlayerFarmerCharacter::Interact()
 		TargetInteractable->Interact(this);
 	}
 
+}
+
+void APlayerFarmerCharacter::HideMoneyBox() const
+{
+	Cast<UPlayerMoneyWidget>(PlayerMoneyWidgetComponent->GetUserWidgetObject())->HideMoneyWidget();
+}
+
+void APlayerFarmerCharacter::ShowMoneyBox() const
+{
+	Cast<UPlayerMoneyWidget>(PlayerMoneyWidgetComponent->GetUserWidgetObject())->ShowMoneyWidget();
 }

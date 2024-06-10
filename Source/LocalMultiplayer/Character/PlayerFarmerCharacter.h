@@ -189,6 +189,9 @@ protected:
 public:
 	int32 GetPlayerMoney() const { return PlayerMoney; }
 
+	void HideMoneyBox() const;
+	void ShowMoneyBox() const;
+
 	UPROPERTY(VisibleAnywhere, Category = "Player Money | Widgets")
 	UWidgetComponent* PlayerMoneyWidgetComponent;
 };
