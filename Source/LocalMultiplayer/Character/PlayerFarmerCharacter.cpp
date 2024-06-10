@@ -5,16 +5,14 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Core/FarmersRush_GameMode.h"
 #include "Components/CapsuleComponent.h"
-#include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 #include <LocalMultiplayer/Core/Dev/DevGameMode.h>
-
-#include "LocalMultiplayer/UI/Player/PlayerHUD.h"
+#include "Components/WidgetComponent.h"
+#include "LocalMultiplayer/UI/Player/PlayerMoneyWidget.h"
 
 // cvar for debugging character
 static TAutoConsoleVariable<int32> CVarDebugCharacter(
@@ -32,6 +30,13 @@ APlayerFarmerCharacter::APlayerFarmerCharacter()
 
 	InteractionCheckFrequency = 0.1f;
 	InteractionCheckDistance = 225.0f;
+
+	// Setup widget component for player money
+	PlayerMoneyWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("PlayerMoneyWidgetComponent"));
+	PlayerMoneyWidgetComponent->SetupAttachment(GetRootComponent());
+	PlayerMoneyWidgetComponent->SetWidgetClass(UPlayerMoneyWidget::StaticClass());
+	PlayerMoneyWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	PlayerMoneyWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +71,10 @@ void APlayerFarmerCharacter::BeginPlay()
 	}
 
 	// TODO: Remove this, only for testing
-	PlayerMoney = PlayerIndex;
+	PlayerMoney = FMath::RandRange(0, 1000);
+
+	// PlayerMoneyWidget = CreateWidget<UPlayerMoneyWidget>(GetWorld(), PlayerMoneyWidgetClass);
+	Cast<UPlayerMoneyWidget>(PlayerMoneyWidgetComponent->GetUserWidgetObject())->SetOwner(this);
 }
 
 void APlayerFarmerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)

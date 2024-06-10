@@ -4,34 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerGameStatus.generated.h"
+#include "PlayerMoneyWidget.generated.h"
 
-class UTextBlock;
-class UOverlay;
 class APlayerFarmerCharacter;
+class UTextBlock;
 
 /**
  * 
  */
-UCLASS()
-class LOCALMULTIPLAYER_API UPlayerGameStatus : public UUserWidget
+UCLASS(Abstract)
+class LOCALMULTIPLAYER_API UPlayerMoneyWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 	virtual void NativeConstruct() override;
 	virtual void NativeOnInitialized() override;
 
-public:
-	UPROPERTY(VisibleAnywhere, Category = "Player Game Status | Player Reference")
-	APlayerFarmerCharacter* PlayerCharacter;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+public:
+	
+	void SetOwner(APlayerFarmerCharacter* Player);
 	void UpdatePlayerMoney();
 
 protected:
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Player Game Status")
-	UOverlay* PlayerStatusOverlay;
+	TWeakObjectPtr<APlayerFarmerCharacter> PlayerCharacter;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Player Game Status")
 	UTextBlock* PlayerCurrentMoneyText;
+
 };

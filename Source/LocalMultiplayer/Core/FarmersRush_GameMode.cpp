@@ -14,7 +14,6 @@
 #include "LocalMultiplayer/Character/MainMenu/PlayerInputDummy.h"
 #include "LocalMultiplayer/UI/MainMenu/MainMenu_UI.h"
 #include "LocalMultiplayer/UI/MainMenu/PlayerInfo_UI.h"
-#include "LocalMultiplayer/UI/Player/PlayerHUD.h"
 
 AFarmersRush_GameMode::AFarmersRush_GameMode()
 {
@@ -107,8 +106,6 @@ void AFarmersRush_GameMode::SetupForDummies()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("PC at index %d is invalid!"), Index);
 				}
-
-				Cast<APlayerHUD>(PC->GetHUD())->HidePlayerStatus();
 			}
 
 			SpawnAndPossessDummy(PlayerStart, Index);
@@ -373,20 +370,6 @@ void AFarmersRush_GameMode::LoadLevel()
 	AdjustCharacterLocation();
 	SetupPlayerCamera();
 
-	// Display player status widget for each player
-	for (const auto Character : CurrentCharacters)
-	{
-		if (const auto PC = UGameplayStatics::GetPlayerController(this, Character->PlayerIndex))
-		{
-			auto HUD = Cast<APlayerHUD>(PC->GetHUD());
-			if (HUD)
-			{
-				HUD->DisplayPlayerStatus();
-				HUD->UpdatePlayerMoney();
-			}	
-		}
-	}
-	
 	FadeCamera(true);
 }
 
@@ -418,9 +401,6 @@ void AFarmersRush_GameMode::LoadMainMenu()
 		{
 			if (Cast<APlayerInputDummy>(PC->GetPawn()))
 			{
-				// Hide player status widget for each player
-				Cast<APlayerHUD>(PC->GetHUD())->HidePlayerStatus();
-				
 				PC->UnPossess();
 				PC->Destroy();
 			}

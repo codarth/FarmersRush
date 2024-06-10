@@ -7,7 +7,8 @@
 #include "LocalMultiplayer/Core/Interfaces/Countdown_Interface.h"
 #include "PlayerFarmerCharacter.generated.h"
 
-class APlayerHUD;
+class UWidgetComponent;
+class UPlayerMoneyWidget;
 class IInteract_Interface;
 class AFarmersRush_GameMode;
 struct FInputActionValue;
@@ -131,7 +132,6 @@ public:
 	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
 
 private:
-
 	void PerformInteractionCheck();
 	void FoundInteractable(AActor* NewInteractable);
 	void NoInteractableFound();
@@ -180,10 +180,15 @@ private:
 
 	/** Player Money */
 protected:
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player Money")
 	int32 PlayerMoney = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Money | Widgets")
+	TSubclassOf<UPlayerMoneyWidget> PlayerMoneyWidgetClass;
+
 public:
 	int32 GetPlayerMoney() const { return PlayerMoney; }
-	
+
+	UPROPERTY(VisibleAnywhere, Category = "Player Money | Widgets")
+	UWidgetComponent* PlayerMoneyWidgetComponent;
 };
