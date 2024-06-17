@@ -37,9 +37,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")
 	FInteractableData InstanceInteractableData;
 
-	// Interaction widget
-	UPROPERTY(EditInstanceOnly, Category = "Interactable")
-	UInteractionWidget* InteractionWidget;
+	// // Interaction widget
+	// UPROPERTY(EditInstanceOnly, Category = "Interactable")
+	// UInteractionWidget* InteractionWidget;
 
 	// Item reference
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")
@@ -67,6 +67,22 @@ protected:
 	// Perform the interaction
 	void TakeInteractable(const APlayerFarmerCharacter* Taker);
 
+	/** Interaction Widget */
+	// Interaction widget class
+	UPROPERTY(EditAnywhere, Category = "Interactable")
+	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
+
+public:
+	// Interaction widget component
+	UPROPERTY(VisibleAnywhere, Category = "Interactable")
+	UWidgetComponent* InteractionWidgetComponent;
+
+	// Hide the interaction widget
+	virtual void HideInteractionWidget() override;
+	// Show the interaction widget
+	virtual void ShowInteractionWidget() override;
+
+protected:
 #if WITH_EDITOR
 	// When changes are made in the editor
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

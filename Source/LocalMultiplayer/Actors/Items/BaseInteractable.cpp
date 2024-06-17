@@ -3,6 +3,7 @@
 
 #include "BaseInteractable.h"
 #include "ItemBase.h"
+#include "Components/WidgetComponent.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 #include "LocalMultiplayer/UI/Interaction/InteractionWidget.h"
 
@@ -16,6 +17,13 @@ ABaseInteractable::ABaseInteractable()
 	Interactable_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Interactable_Mesh"));
 	Interactable_Mesh->SetSimulatePhysics(true);
 	RootComponent = Interactable_Mesh;
+
+	// Setup the interaction widget component
+	InteractionWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionWidgetComponent"));
+	InteractionWidgetComponent->SetupAttachment(RootComponent);
+	InteractionWidgetComponent->SetWidgetClass(UInteractionWidget::StaticClass());
+	InteractionWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	InteractionWidgetComponent->SetDrawAtDesiredSize(true);
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +32,8 @@ void ABaseInteractable::BeginPlay()
 	Super::BeginPlay();
 
 	InitializeInteractable(UItemBase::StaticClass(), ItemQuantity);
+
+	HideInteractionWidget();
 }
 
 void ABaseInteractable::InitializeInteractable(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity)
@@ -63,6 +73,8 @@ void ABaseInteractable::UpdateInteractableData()
 	InstanceInteractableData.Action = ItemReference->TextData.InteractionText;
 	InstanceInteractableData.Quantity = ItemReference->Quantity;
 	InteractableData = InstanceInteractableData;
+
+	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->SetInteractionText(FText::Format(FText::FromString("{0} {1}"), ItemReference->TextData.InteractionText, ItemReference->TextData.ItemName));
 }
 
 void ABaseInteractable::TakeInteractable(const APlayerFarmerCharacter* Taker)
@@ -85,7 +97,7 @@ void ABaseInteractable::BeginFocus()
 		Interactable_Mesh->SetRenderCustomDepth(true);
 	}
 
-	InteractionWidget->SetVisibility(ESlateVisibility::Visible);
+	ShowInteractionWidget();
 }
 
 void ABaseInteractable::EndFocus()
@@ -96,7 +108,17 @@ void ABaseInteractable::EndFocus()
 		Interactable_Mesh->SetRenderCustomDepth(false);
 	}
 
-	InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
+	HideInteractionWidget();
+}
+
+void ABaseInteractable::HideInteractionWidget()
+{
+	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->HideInteractionWidget();
+}
+
+void ABaseInteractable::ShowInteractionWidget()
+{
+	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->ShowInteractionWidget();
 }
 
 void ABaseInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)

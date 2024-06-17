@@ -12,6 +12,7 @@
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 #include <LocalMultiplayer/Core/Dev/DevGameMode.h>
 #include "Components/WidgetComponent.h"
+#include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/UI/Player/PlayerMoneyWidget.h"
 
 // cvar for debugging character
@@ -293,6 +294,7 @@ void APlayerFarmerCharacter::NoInteractableFound()
 		}
 
 		// Hide the interaction widget on the Item
+		Cast<ABaseInteractable>(InteractionData.CurrentInteractable)->HideInteractionWidget();
 
 		// Clear the current interactable
 		InteractionData.CurrentInteractable = nullptr;

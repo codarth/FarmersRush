@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InteractionWidget.generated.h"
 
-class UBorder;
+class UHorizontalBox;
 class UTextBlock;
 
 /**
@@ -17,17 +17,17 @@ class LOCALMULTIPLAYER_API UInteractionWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	// virtual void NativeConstruct() override;
-
 public:
 
-	FORCEINLINE UBorder* GetInteractionBorder() const { return InteractionBorder; }
-	FORCEINLINE UTextBlock* GetInteractionText() const { return InteractionText; }
+	void HideInteractionWidget() const;
+	void ShowInteractionWidget() const;
 
-private:
+	void SetInteractionText(const FText& Text) const;
+
+protected:
 	
 	UPROPERTY(meta = (BindWidget))
-	UBorder* InteractionBorder;
+	UHorizontalBox* InteractionBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* InteractionText;
