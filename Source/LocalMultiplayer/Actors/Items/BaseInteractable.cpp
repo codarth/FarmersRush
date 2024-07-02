@@ -74,7 +74,9 @@ void ABaseInteractable::UpdateInteractableData()
 	InstanceInteractableData.Quantity = ItemReference->Quantity;
 	InteractableData = InstanceInteractableData;
 
-	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->SetInteractionText(FText::Format(FText::FromString("{0} {1}"), ItemReference->TextData.InteractionText, ItemReference->TextData.ItemName));
+	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->SetInteractionText(
+		FText::Format(FText::FromString("{0} {1}"), ItemReference->TextData.InteractionText,
+		              ItemReference->TextData.ItemName));
 }
 
 void ABaseInteractable::TakeInteractable(const APlayerFarmerCharacter* Taker)
@@ -113,7 +115,10 @@ void ABaseInteractable::EndFocus()
 
 void ABaseInteractable::HideInteractionWidget()
 {
-	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->HideInteractionWidget();
+	if (const auto Widget = Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject()))
+	{
+		Widget->HideInteractionWidget();
+	}
 }
 
 void ABaseInteractable::ShowInteractionWidget()

@@ -226,7 +226,7 @@ void APlayerFarmerCharacter::PerformInteractionCheck()
 			//DrawDebugCapsule(GetWorld(), TraceStart, InteractionCheckHalfHeight, InteractionCheckRadius, FQuat::Identity, FColor::Red, false, 1.0f, 0, 1.0f);
 			DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Blue, false, 1, 0, 1);
 		}
-		
+
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		FHitResult TraceHit;
@@ -349,7 +349,6 @@ void APlayerFarmerCharacter::Interact()
 	{
 		TargetInteractable->Interact(this);
 	}
-
 }
 
 void APlayerFarmerCharacter::HideMoneyBox() const
