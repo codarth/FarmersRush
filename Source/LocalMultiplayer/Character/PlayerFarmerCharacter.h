@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/Core/Interfaces/Countdown_Interface.h"
 #include "PlayerFarmerCharacter.generated.h"
 
@@ -128,7 +129,6 @@ public:
 	FTimerHandle TimerHandle_Interaction;
 	FInteractionData InteractionData;
 
-
 	FORCEINLINE bool IsInteracting() const { return GetWorldTimerManager().IsTimerActive(TimerHandle_Interaction); }
 
 private:
@@ -138,9 +138,10 @@ private:
 	void BeginInteract();
 	void EndInteract();
 	void Interact();
-
-	void UpdateInteractionWidget() const;
-
+public:
+	void HandleAddItem(UItemBase* Item);
+	
+private:
 	/** Input **/
 	// Mapping context
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
@@ -194,4 +195,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Player Money | Widgets")
 	UWidgetComponent* PlayerMoneyWidgetComponent;
+
+	// Held Item
+	UPROPERTY(VisibleAnywhere, Category = "Held Item")
+	UItemBase* HeldItem;
+
+	UPROPERTY(VisibleAnywhere, Category = "Held Item")
+	UStaticMeshComponent* HeldItemMesh;
 };

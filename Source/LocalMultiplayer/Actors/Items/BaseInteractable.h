@@ -29,10 +29,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Mesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
-	UStaticMeshComponent* Interactable_Mesh;
-
 	// Data for interaction
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")
 	FInteractableData InstanceInteractableData;
@@ -65,7 +61,7 @@ protected:
 	void UpdateInteractableData();
 
 	// Perform the interaction
-	void TakeInteractable(const APlayerFarmerCharacter* Taker);
+	void TakeInteractable(APlayerFarmerCharacter* Taker);
 
 	/** Interaction Widget */
 	// Interaction widget class
@@ -73,6 +69,10 @@ protected:
 	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
 
 public:
+	// Mesh
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
+	UStaticMeshComponent* Interactable_Mesh;
+	
 	// Interaction widget component
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")
 	UWidgetComponent* InteractionWidgetComponent;

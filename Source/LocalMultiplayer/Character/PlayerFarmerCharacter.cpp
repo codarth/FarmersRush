@@ -9,11 +9,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Core/FarmersRush_GameMode.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "LocalMultiplayer/Core/Interfaces/Interact_Interface.h"
 #include <LocalMultiplayer/Core/Dev/DevGameMode.h>
 #include "Components/WidgetComponent.h"
 #include "LocalMultiplayer/Actors/Items/BaseInteractable.h"
 #include "LocalMultiplayer/UI/Player/PlayerMoneyWidget.h"
+#include "LocalMultiplayer/Actors/Items/ItemBase.h"
 
 // cvar for debugging character
 static TAutoConsoleVariable<int32> CVarDebugCharacter(
@@ -38,6 +40,12 @@ APlayerFarmerCharacter::APlayerFarmerCharacter()
 	PlayerMoneyWidgetComponent->SetWidgetClass(UPlayerMoneyWidget::StaticClass());
 	PlayerMoneyWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	PlayerMoneyWidgetComponent->SetDrawAtDesiredSize(true);
+
+	// Setup held object mesh
+	HeldItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldItemMesh"));
+	HeldItemMesh->SetupAttachment(GetMesh(), "r_hand_itemsocket");
+	HeldItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HeldItemMesh->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -348,6 +356,16 @@ void APlayerFarmerCharacter::Interact()
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		TargetInteractable->Interact(this);
+	}
+}
+
+void APlayerFarmerCharacter::HandleAddItem(UItemBase* Item)
+{
+	if (Item)
+	{
+		HeldItem = Item;
+		HeldItemMesh->SetStaticMesh(Item->AssetData.Mesh);
+		HeldItemMesh->SetVisibility(true);
 	}
 }
 

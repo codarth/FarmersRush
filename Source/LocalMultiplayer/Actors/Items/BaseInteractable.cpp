@@ -79,13 +79,13 @@ void ABaseInteractable::UpdateInteractableData()
 		              ItemReference->TextData.ItemName));
 }
 
-void ABaseInteractable::TakeInteractable(const APlayerFarmerCharacter* Taker)
+void ABaseInteractable::TakeInteractable(APlayerFarmerCharacter* Taker)
 {
 	if (!IsPendingKillPending())
 	{
 		if (ItemReference)
 		{
-			// Taker->HandleAddItem(ItemReference);
+			Taker->HandleAddItem(ItemReference);
 			Destroy();
 		}
 	}
@@ -95,7 +95,7 @@ void ABaseInteractable::BeginFocus()
 {
 	if (Interactable_Mesh)
 	{
-		// Hightlight the mesh
+		// Highlight the mesh
 		Interactable_Mesh->SetRenderCustomDepth(true);
 	}
 
@@ -137,6 +137,7 @@ void ABaseInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 	if (ChangePropertyName == GET_MEMBER_NAME_CHECKED(FDataTableRowHandle, RowName))
 	{
 		const FItemData* ItemData = ItemRowHandle.GetRow<FItemData>(ItemRowHandle.RowName.ToString());
+		
 		Interactable_Mesh->SetStaticMesh(ItemData->AssetData.Mesh);
 	}
 }
