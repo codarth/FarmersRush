@@ -53,9 +53,6 @@ protected:
 	// Called when the game ends or when destroyed
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	UPROPERTY()
 	AFarmersRush_GameMode* GameModeRef = nullptr;
 
@@ -143,6 +140,10 @@ public:
 	
 private:
 	/** Input **/
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 	// Mapping context
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* MappingContext;
@@ -167,6 +168,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	// Drop Item Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input Mapping", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DropItemAction;
+
 	// Called for Move Forward input
 	void Move(const FInputActionValue& Value);
 
@@ -178,6 +183,9 @@ private:
 
 	// Called for Deactivate Player input
 	void DeactivatePlayer(const FInputActionValue& Value);
+
+	// Called for Drop Item input
+	void DropItem(const FInputActionValue& Value);
 
 	/** Player Money */
 protected:
@@ -202,4 +210,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Held Item")
 	UStaticMeshComponent* HeldItemMesh;
+
+	UPROPERTY()
+	FDataTableRowHandle HeldItemRowHandle;
 };

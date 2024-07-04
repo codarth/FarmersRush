@@ -119,6 +119,8 @@ void APlayerFarmerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 		Input->BindAction(InteractAction, ETriggerEvent::Started, this, &APlayerFarmerCharacter::BeginInteract);
 		Input->BindAction(InteractAction, ETriggerEvent::Completed, this, &APlayerFarmerCharacter::EndInteract);
+
+		Input->BindAction(DropItemAction, ETriggerEvent::Started, this, &APlayerFarmerCharacter::DropItem);
 	}
 }
 
@@ -182,6 +184,25 @@ void APlayerFarmerCharacter::DeactivatePlayer(const FInputActionValue& Value)
 		Camera = nullptr;
 
 		GameModeRef->DeactivatePlayer(PlayerIndex);
+	}
+}
+
+void APlayerFarmerCharacter::DropItem(const FInputActionValue& Value)
+{
+	if (HeldItem)
+	{
+		const FVector SpawnLocation{GetActorLocation() + GetActorForwardVector() * 100.f};
+		const FTransform SpawnTransform{GetActorRotation(), SpawnLocation};
+
+		ABaseInteractable* DroppedItem = GetWorld()->SpawnActorDeferred<ABaseInteractable>(ABaseInteractable::StaticClass(), SpawnTransform, this, this, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		DroppedItem->SetItemRowHandle(HeldItemRowHandle);
+		UGameplayStatics::FinishSpawningActor(DroppedItem, SpawnTransform);
+		DroppedItem->InitializeInteractable(HeldItem->GetClass(), 1);
+
+		// Nullify the held item
+		HeldItem = nullptr;
+		HeldItemMesh->SetVisibility(false);
+		HeldItemMesh->SetStaticMesh(nullptr);
 	}
 }
 
@@ -356,6 +377,7 @@ void APlayerFarmerCharacter::Interact()
 	if (IsValid(TargetInteractable.GetObject()))
 	{
 		TargetInteractable->Interact(this);
+		HeldItemRowHandle = Cast<ABaseInteractable>(InteractionData.CurrentInteractable)->GetItemRowHandle();
 	}
 }
 

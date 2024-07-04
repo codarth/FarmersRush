@@ -25,6 +25,9 @@ public:
 	virtual void BeginFocus() override;
 	virtual void EndFocus() override;
 
+	// Initialize the interactable
+	void InitializeInteractable(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,9 +52,6 @@ protected:
 	UPROPERTY(EditInstanceOnly, Category = "Interactable")
 	FDataTableRowHandle ItemRowHandle;
 
-	// Initialize the interactable
-	void InitializeInteractable(const TSubclassOf<UItemBase> BaseClass, const int32 InQuantity);
-
 	FORCEINLINE UItemBase* GetItemData() const { return ItemReference; }
 
 	// Implement Interaction
@@ -63,15 +63,16 @@ protected:
 	// Perform the interaction
 	void TakeInteractable(APlayerFarmerCharacter* Taker);
 
-	/** Interaction Widget */
-	// Interaction widget class
-	UPROPERTY(EditAnywhere, Category = "Interactable")
-	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
-
 public:
+
+	FORCEINLINE FDataTableRowHandle GetItemRowHandle() const { return ItemRowHandle; }
+	void SetItemRowHandle(const FDataTableRowHandle& InRowHandle) { ItemRowHandle = InRowHandle; }
+	
 	// Mesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interactable")
 	UStaticMeshComponent* Interactable_Mesh;
+
+	/** Interaction Widget */
 	
 	// Interaction widget component
 	UPROPERTY(VisibleAnywhere, Category = "Interactable")

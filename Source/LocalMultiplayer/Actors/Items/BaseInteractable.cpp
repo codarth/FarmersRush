@@ -53,7 +53,8 @@ void ABaseInteractable::InitializeInteractable(const TSubclassOf<UItemBase> Base
 		InQuantity <= 0 ? ItemReference->SetQuantity(1) : ItemReference->SetQuantity(InQuantity);
 
 		Interactable_Mesh->SetStaticMesh(ItemData->AssetData.Mesh);
-
+		InteractionWidgetComponent->SetWidgetClass(ItemData->AssetData.InteractionWidgetClass);
+		
 		UpdateInteractableData();
 	}
 }
@@ -126,6 +127,7 @@ void ABaseInteractable::ShowInteractionWidget()
 	Cast<UInteractionWidget>(InteractionWidgetComponent->GetUserWidgetObject())->ShowInteractionWidget();
 }
 
+#if WITH_EDITOR
 void ABaseInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -141,3 +143,4 @@ void ABaseInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyCh
 		Interactable_Mesh->SetStaticMesh(ItemData->AssetData.Mesh);
 	}
 }
+#endif
