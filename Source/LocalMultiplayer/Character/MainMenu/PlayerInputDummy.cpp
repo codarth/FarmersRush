@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../Core/FarmersRush_GameMode.h"
+#include "LocalMultiplayer/LocalMultiplayer.h"
 
 
 // Called when the game starts or when spawned
@@ -43,7 +44,7 @@ void APlayerInputDummy::ActivatePlayer(const FInputActionValue& Value)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to get GameMode"));
+			LOG_WARNING("Failed to get GameMode");
 		}
 	}
 }

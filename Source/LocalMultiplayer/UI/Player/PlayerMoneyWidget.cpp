@@ -4,6 +4,7 @@
 #include "PlayerMoneyWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/TextBlock.h"
+#include "LocalMultiplayer/LocalMultiplayer.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 
 void UPlayerMoneyWidget::NativeConstruct()
@@ -35,7 +36,7 @@ void UPlayerMoneyWidget::SetOwner(APlayerFarmerCharacter* Player)
 {
 	if (!Player)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Player is nullptr for %s"), *GetName());
+		LOG_ERROR("Player is nullptr for %s", *GetName());
 		return;
 	}
 	

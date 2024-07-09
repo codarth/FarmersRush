@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "LocalMultiplayer/UI/Interaction/InteractionWidget.h"
 #include "ItemDataStruct.generated.h"
 
 // Type of item

@@ -2,13 +2,13 @@
 
 
 #include "FarmersRush_GameMode.h"
-
 #include "CustomGameViewportClient.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Border.h"
 #include "Components/TextBlock.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "LocalMultiplayer/LocalMultiplayer.h"
 #include "LocalMultiplayer/Camera/MainMenuCamera.h"
 #include "LocalMultiplayer/Character/PlayerFarmerCharacter.h"
 #include "LocalMultiplayer/Character/MainMenu/PlayerInputDummy.h"
@@ -40,7 +40,7 @@ void AFarmersRush_GameMode::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("No GameCamera found!"));
+		LOG_WARNING("No GameCamera found!")
 	}
 
 	// Disable splitscreen
@@ -104,7 +104,7 @@ void AFarmersRush_GameMode::SetupForDummies()
 				const auto PC = UGameplayStatics::CreatePlayer(this, Index, true);
 				if (!PC)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("PC at index %d is invalid!"), Index);
+					LOG_WARNING("PC at index %d is invalid", Index);
 				}
 			}
 
@@ -264,9 +264,6 @@ void AFarmersRush_GameMode::StartGame()
 	MainMenuWidget->CountdownText->SetText(FText::FromString("Let the farming commence!")); // TODO: Random saying
 
 	GetWorldTimerManager().SetTimer(StartCountdownTimerHandle, this, &AFarmersRush_GameMode::TransitionToGame, 2.0f, false);
-
-	// UE_LOG(LogTemp, Warning, TEXT("Game started!"));
-	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Green, TEXT("Game started!"));
 }
 
 void AFarmersRush_GameMode::TransitionToGame()
